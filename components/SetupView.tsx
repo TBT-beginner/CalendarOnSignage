@@ -36,7 +36,12 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
   };
   
   const iconBgClass = theme.name === 'Default' ? 'bg-orange-200' : theme.accentBg;
-  const iconTextClass = theme.name === 'Default' ? 'text-orange-500' : theme.buttonText;
+  
+  let iconTextClass = theme.name === 'Default' ? 'text-orange-500' : theme.buttonText;
+  // Special case for themes where accentBg and buttonText have low contrast
+  if (theme.name === 'Marker') {
+    iconTextClass = 'text-white';
+  }
   
   const lowerError = error?.toLowerCase() ?? '';
   const isOriginError = ['origin', 'redirect_uri', 'redirect_uri_mismatch', 'invalid_request', 'storagerelay'].some(key => lowerError.includes(key));

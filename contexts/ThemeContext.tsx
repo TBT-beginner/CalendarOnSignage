@@ -50,6 +50,32 @@ const defaultTheme: Theme = {
   bannerText: 'text-white',
 };
 
+const markerTheme: Theme = {
+  name: 'Marker',
+  bg: 'bg-white',
+  cardBg: 'bg-white',
+  cardOpacity: '',
+  textPrimary: 'text-black',
+  textSecondary: 'text-gray-800',
+  textMuted: 'text-gray-500',
+  accentText: 'text-blue-600', // Accent: Blue
+  accentBg: 'bg-blue-600',
+  headerText: 'text-black',
+  headerSubtext: 'text-gray-800',
+  button: 'bg-white', // White button
+  buttonText: 'text-blue-600', // Blue text for buttons
+  paginationActive: 'bg-red-500', // Highlight: Red
+  paginationInactive: 'bg-gray-300',
+  // Use box-shadow for a thick, solid border effect. No blur.
+  clayShadow: '8px 8px 0px #000', 
+  clayButtonShadow: '4px 4px 0px #000',
+  clayButtonPressedShadow: '2px 2px 0px #000', // Simpler pressed state by reducing offset
+  hoverBg: 'hover:bg-red-100', // Use a light red for hover as highlight
+  selectionBg: 'bg-red-200', // Use a light red for selection
+  bannerBg: 'bg-blue-500', // Accent: Blue
+  bannerText: 'text-white',
+};
+
 const springTheme: Theme = {
   name: 'Spring',
   bg: 'bg-pink-100',
@@ -278,6 +304,7 @@ const newYearTheme: Theme = {
 };
 
 export const allThemes: Record<string, Theme> = {
+  'Marker': markerTheme,
   'Spring': springTheme,
   'Summer': summerTheme,
   'Autumn': autumnTheme,
