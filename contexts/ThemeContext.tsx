@@ -13,13 +13,14 @@ export interface Theme {
   headerText: string;
   headerSubtext: string;
   button: string;
-  buttonHover: string;
   buttonText: string;
   paginationActive: string;
   paginationInactive: string;
   clayShadow: string;
   clayButtonShadow: string;
   clayButtonPressedShadow: string;
+  hoverBg: string;
+  selectionBg: string;
 }
 
 const defaultTheme: Theme = {
@@ -35,13 +36,14 @@ const defaultTheme: Theme = {
   headerText: 'text-stone-900',
   headerSubtext: 'text-orange-900',
   button: 'bg-orange-100',
-  buttonHover: '',
   buttonText: 'text-orange-800',
   paginationActive: 'bg-orange-500',
   paginationInactive: 'bg-orange-300',
   clayShadow: '10px 10px 20px rgba(194, 126, 50, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
   clayButtonShadow: '5px 5px 10px rgba(194, 126, 50, 0.25)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(194, 126, 50, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
 };
 
 const springTheme: Theme = {
@@ -57,13 +59,14 @@ const springTheme: Theme = {
   headerText: 'text-green-900',
   headerSubtext: 'text-pink-700',
   button: 'bg-pink-50',
-  buttonHover: '',
   buttonText: 'text-pink-600',
   paginationActive: 'bg-pink-400',
   paginationInactive: 'bg-green-200',
   clayShadow: '10px 10px 20px rgba(212, 122, 147, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
   clayButtonShadow: '5px 5px 10px rgba(212, 122, 147, 0.25)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(212, 122, 147, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
 };
 
 const summerTheme: Theme = {
@@ -79,13 +82,14 @@ const summerTheme: Theme = {
   headerText: 'text-blue-900',
   headerSubtext: 'text-sky-800',
   button: 'bg-sky-100',
-  buttonHover: '',
   buttonText: 'text-sky-700',
   paginationActive: 'bg-yellow-400',
   paginationInactive: 'bg-sky-300',
   clayShadow: '10px 10px 20px rgba(50, 138, 194, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
   clayButtonShadow: '5px 5px 10px rgba(50, 138, 194, 0.25)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(50, 138, 194, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
 };
 
 const autumnTheme: Theme = {
@@ -101,13 +105,14 @@ const autumnTheme: Theme = {
   headerText: 'text-stone-900',
   headerSubtext: 'text-amber-800',
   button: 'bg-amber-100',
-  buttonHover: '',
   buttonText: 'text-red-700',
   paginationActive: 'bg-red-500',
   paginationInactive: 'bg-amber-300',
   clayShadow: '10px 10px 20px rgba(194, 142, 50, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
   clayButtonShadow: '5px 5px 10px rgba(194, 142, 50, 0.25)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(194, 142, 50, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
 };
 
 const winterTheme: Theme = {
@@ -123,15 +128,61 @@ const winterTheme: Theme = {
   headerText: 'text-slate-900',
   headerSubtext: 'text-slate-700',
   button: 'bg-slate-50',
-  buttonHover: '',
   buttonText: 'text-sky-700',
   paginationActive: 'bg-sky-500',
   paginationInactive: 'bg-slate-400',
   clayShadow: '10px 10px 20px rgba(136, 150, 164, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
   clayButtonShadow: '5px 5px 10px rgba(136, 150, 164, 0.25)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(136, 150, 164, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
 };
 
+const matchaTheme: Theme = {
+  name: 'Matcha',
+  bg: 'bg-emerald-100',
+  cardBg: 'bg-emerald-50',
+  cardOpacity: '',
+  textPrimary: 'text-emerald-900',
+  textSecondary: 'text-amber-800',
+  textMuted: 'text-emerald-700',
+  accentText: 'text-amber-600',
+  accentBg: 'bg-amber-500',
+  headerText: 'text-emerald-900',
+  headerSubtext: 'text-amber-900',
+  button: 'bg-emerald-50',
+  buttonText: 'text-emerald-800',
+  paginationActive: 'bg-amber-500',
+  paginationInactive: 'bg-emerald-300',
+  clayShadow: '10px 10px 20px rgba(67, 138, 114, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
+  clayButtonShadow: '5px 5px 10px rgba(67, 138, 114, 0.25)',
+  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(67, 138, 114, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
+};
+
+const zenTheme: Theme = {
+  name: 'Zen',
+  bg: 'bg-slate-200',
+  cardBg: 'bg-white',
+  cardOpacity: '',
+  textPrimary: 'text-slate-800',
+  textSecondary: 'text-slate-600',
+  textMuted: 'text-slate-500',
+  accentText: 'text-sky-800',
+  accentBg: 'bg-sky-700',
+  headerText: 'text-slate-900',
+  headerSubtext: 'text-slate-700',
+  button: 'bg-white',
+  buttonText: 'text-sky-800',
+  paginationActive: 'bg-sky-700',
+  paginationInactive: 'bg-slate-400',
+  clayShadow: '10px 10px 20px rgba(136, 150, 164, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
+  clayButtonShadow: '5px 5px 10px rgba(136, 150, 164, 0.25)',
+  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(136, 150, 164, 0.25)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
+};
 
 const halloweenTheme: Theme = {
   name: 'Halloween',
@@ -146,13 +197,14 @@ const halloweenTheme: Theme = {
   headerText: 'text-orange-500',
   headerSubtext: 'text-purple-300',
   button: 'bg-slate-700',
-  buttonHover: '',
   buttonText: 'text-orange-400',
   paginationActive: 'bg-orange-500',
   paginationInactive: 'bg-purple-800',
   clayShadow: '10px 10px 20px rgba(25, 33, 46, 0.5), inset 4px 4px 8px rgba(0,0,0,0.3), inset -4px -4px 8px rgba(90, 103, 125, 0.3)',
   clayButtonShadow: '5px 5px 10px rgba(25, 33, 46, 0.5)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(25, 33, 46, 0.5)',
+  hoverBg: 'hover:bg-white/10',
+  selectionBg: 'bg-white/10',
 };
 
 
@@ -169,13 +221,14 @@ const christmasTheme: Theme = {
   headerText: 'text-white',
   headerSubtext: 'text-red-200',
   button: 'bg-red-600',
-  buttonHover: '',
   buttonText: 'text-yellow-300',
   paginationActive: 'bg-yellow-400',
   paginationInactive: 'bg-red-400',
   clayShadow: '10px 10px 20px rgba(142, 36, 36, 0.5), inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(224, 78, 78, 0.4)',
   clayButtonShadow: '5px 5px 10px rgba(142, 36, 36, 0.5)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(142, 36, 36, 0.5)',
+  hoverBg: 'hover:bg-white/10',
+  selectionBg: 'bg-white/10',
 };
 
 
@@ -192,13 +245,14 @@ const newYearTheme: Theme = {
   headerText: 'text-red-700',
   headerSubtext: 'text-red-500',
   button: 'bg-white',
-  buttonHover: '',
   buttonText: 'text-yellow-600',
   paginationActive: 'bg-yellow-500',
   paginationInactive: 'bg-red-300',
   clayShadow: '10px 10px 20px rgba(204, 151, 151, 0.5), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
   clayButtonShadow: '5px 5px 10px rgba(204, 151, 151, 0.5)',
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(204, 151, 151, 0.5)',
+  hoverBg: 'hover:bg-black/10',
+  selectionBg: 'bg-black/10',
 };
 
 export const allThemes: Record<string, Theme> = {
@@ -206,6 +260,8 @@ export const allThemes: Record<string, Theme> = {
   'Summer': summerTheme,
   'Autumn': autumnTheme,
   'Winter': winterTheme,
+  'Matcha': matchaTheme,
+  'Zen': zenTheme,
   'Halloween': halloweenTheme,
   'Christmas': christmasTheme,
   'New Year': newYearTheme,

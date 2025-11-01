@@ -61,7 +61,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
             <ul className="space-y-2">
               {availableCalendars.map((calendar) => (
                 <li key={calendar.id}>
-                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors hover:bg-black/5 ${localSelectedIds.has(calendar.id) ? 'bg-black/10' : ''}`}>
+                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors ${theme.hoverBg} ${localSelectedIds.has(calendar.id) ? theme.selectionBg : ''}`}>
                     <input
                       type="checkbox"
                       className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
@@ -87,7 +87,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
         <div className="flex justify-end gap-4 pt-6 mt-auto">
           <button
             onClick={onClose}
-            className={`px-6 py-2 rounded-xl font-semibold transition-colors ${theme.textSecondary} hover:bg-black/5`}
+            className={`px-6 py-2 rounded-xl font-semibold transition-colors ${theme.textSecondary} ${theme.hoverBg}`}
           >
             キャンセル
           </button>

@@ -33,7 +33,7 @@ const ThemeToggle: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`${theme.headerText} p-2 rounded-full hover:bg-black/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
+        className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
         aria-label="テーマを切り替える"
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -54,7 +54,7 @@ const ThemeToggle: React.FC = () => {
               <button
                 key={key}
                 onClick={() => handleThemeChange(key)}
-                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${theme.textPrimary} hover:bg-black/5`}
+                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${theme.textPrimary} ${theme.hoverBg}`}
                 role="menuitem"
               >
                 <div className="flex items-center">
