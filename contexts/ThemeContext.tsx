@@ -313,7 +313,6 @@ const getCurrentTheme = (): Theme => {
 };
 
 // --- Surprise Me! Theme Generation ---
-// FIX: Add generic type parameter <T> to resolve "Cannot find name 'T'" error.
 // In a .tsx file, <T> can be ambiguous with a JSX tag. A trailing comma <T,> clarifies it's a generic type parameter.
 const getRandomElement = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
