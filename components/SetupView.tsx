@@ -18,6 +18,13 @@ const GoogleIcon = () => (
   </svg>
 );
 
+const ExclamationIcon = () => (
+  <svg className="h-6 w-6 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+  </svg>
+);
+
+
 const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) => {
   const theme = useTheme();
 
@@ -32,7 +39,10 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
   const iconTextClass = theme.name === 'Default' ? 'text-orange-500' : theme.buttonText;
   const iconBorderClass = theme.name === 'Default' ? 'border-orange-200' : 'border-transparent';
   const opacityClass = theme.name === 'Default' ? '' : 'bg-opacity-20';
-
+  
+  const lowerError = error?.toLowerCase() ?? '';
+  const isOriginError = ['origin', 'redirect_uri', 'invalid_request', 'storagerelay'].some(key => lowerError.includes(key));
+  const isClientIdError = lowerError.includes('g.co/dev/eerst');
 
   return (
     <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${theme.textPrimary}`}>
@@ -60,21 +70,64 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         </form>
         
         {error && (
-          <div className="mt-6 text-red-700 bg-red-100 p-4 rounded-lg text-sm text-left">
-            <strong>エラー:</strong> {error}
-            {error.includes('g.co/dev/ eerst') && 
-              <p className="mt-2 text-xs">
-                <strong>開発者の方へ: </strong>このエラーは、Google CloudのクライアントIDが正しく設定されていない場合に発生します。
-                <code>hooks/useGoogleAuth.ts</code> ファイル内の <code>GOOGLE_CLIENT_ID</code> を有効な値に置き換えてください。
-              </p>
-            }
-             {(error.toLowerCase().includes('origin') || error.toLowerCase().includes('redirect_uri')) &&
-              <p className="mt-2 text-xs">
-                <strong>開発者の方へ: </strong>このエラーは、アプリケーションの実行元URLがGoogle Cloudコンソールで承認されていない場合に発生することが多いです。
-                <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-800">Google Cloud Console</a>
-                にアクセスし、お使いのOAuth 2.0クライアントIDの「承認済みのJavaScript生成元」に、現在のURL (<code>{window.location.origin}</code>) を追加してください。変更が反映されるまで数分かかることがあります。
-              </p>
-            }
+          <div className="mt-6 text-red-800 bg-red-100 p-4 rounded-lg text-sm text-left border border-red-300">
+            <div className="flex items-start">
+              <ExclamationIcon />
+              <div className="ml-3 flex-1">
+                <h3 className="font-bold text-red-900">Google認証設定が必要です</h3>
+                <p className="mt-1 font-mono text-xs bg-red-200 text-red-900 p-2 rounded break-words">{error}</p>
+              </div>
+            </div>
+
+            {(isOriginError || isClientIdError) && (
+              <div className="mt-4 pt-3 border-t border-red-200 text-xs">
+                <strong className="block mb-2 text-base text-gray-800">開発者の方へ：このエラーの解決方法</strong>
+                <p className="mb-3">このエラーは、Google Cloud Consoleの認証情報設定が正しくないために発生しています。以下の手順で設定を確認・修正してください。</p>
+                <p className="mb-4 p-2 bg-yellow-100 text-yellow-900 rounded-md border border-yellow-200">
+                  もし開発者でない場合は、このメッセージ全体をコピーまたはスクリーンショットして、アプリケーションの管理者または開発担当者にお伝えください。
+                </p>
+
+                {isOriginError && (
+                  <div>
+                    <strong className="block mb-1 text-gray-700">原因：承認されていないURL（オリジン）からのアクセス</strong>
+                    <p>Googleのセキュリティポリシーにより、登録されたURLからのみ認証が許可されます。</p>
+                    <ol className="list-decimal list-inside my-2 space-y-1.5 pl-2">
+                      <li>
+                        <strong>以下のURLをコピーしてください:</strong>
+                        <div className="flex items-center mt-1">
+                          <code className="bg-red-200 text-red-900 p-1.5 rounded-l font-mono text-[11px] break-all flex-grow">{window.location.origin}</code>
+                          <button 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigator.clipboard.writeText(window.location.origin);
+                            }}
+                            className="bg-red-300 text-red-900 font-bold p-1.5 rounded-r hover:bg-red-400 transition-colors text-xs"
+                          >
+                            コピー
+                          </button>
+                        </div>
+                      </li>
+                      <li>
+                        <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-800">
+                          Google Cloudの認証情報ページ
+                        </a>
+                        を開きます。
+                      </li>
+                      <li>お使いの「OAuth 2.0 クライアント ID」を選択します。</li>
+                      <li>「承認済みのJavaScript生成元」に、先ほどコピーしたURLを追加して保存します。</li>
+                    </ol>
+                    <p className="mt-2"><strong>注意:</strong> 設定の反映には数分かかることがあります。反映後にページを再読み込みしてください。</p>
+                  </div>
+                )}
+
+                {isClientIdError && (
+                     <div className="text-xs mt-3 pt-3 border-t border-red-200">
+                        <strong className="block mb-1 text-gray-700">原因：クライアントIDが無効です</strong>
+                        <p>クライアントIDが無効か、削除されていることを示します。<code>hooks/useGoogleAuth.ts</code> ファイル内の <code>GOOGLE_CLIENT_ID</code> が、Google Cloud Consoleで作成したものと一致しているか確認してください。</p>
+                    </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
