@@ -1,45 +1,30 @@
 
 import React from 'react';
 import { CalendarEvent } from '../types';
-import { useTheme } from '../contexts/ThemeContext';
-import InformationIcon from './icons/InformationIcon';
+import CalendarIcon from './icons/CalendarIcon';
 
 interface AllDayEventsBannerProps {
   events: CalendarEvent[];
 }
 
 const AllDayEventsBanner: React.FC<AllDayEventsBannerProps> = ({ events }) => {
-  const theme = useTheme();
-
   if (events.length === 0) {
     return null;
   }
 
-  const marqueeDuration = events.length * 10;
-
-  const bannerBg = theme.name === 'Default' ? 'bg-orange-600' : theme.accentBg;
-  const bannerText = theme.name === 'Default' ? 'text-white' : theme.buttonText;
-
   return (
-    <div className={`w-full ${bannerBg} ${bannerText} rounded-lg shadow-md p-3 mb-6 overflow-hidden flex items-center`}>
-      <div className="flex-shrink-0 mr-4">
-        <InformationIcon className="w-6 h-6" />
+    <div className="p-4 bg-blue-100 dark:bg-blue-900/50 rounded-lg mb-6">
+      <div className="flex items-center space-x-3">
+        <CalendarIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200">
+          終日の予定
+        </h3>
       </div>
-      <div className="flex-grow relative h-6 overflow-hidden">
-        {events.length === 1 ? (
-          <div className="whitespace-nowrap font-bold text-lg">
-            {events[0].summary}
-          </div>
-        ) : (
-          <div className="absolute flex" style={{ animation: `marquee ${marqueeDuration}s linear infinite` }}>
-            {[...events, ...events].map((event, index) => (
-              <span key={index} className="mx-8 whitespace-nowrap font-bold text-lg">
-                {event.summary}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
+      <ul className="mt-2 list-disc list-inside text-sm text-blue-700 dark:text-blue-300">
+        {events.map((event, index) => (
+          <li key={index}>{event.summary}</li>
+        ))}
+      </ul>
     </div>
   );
 };

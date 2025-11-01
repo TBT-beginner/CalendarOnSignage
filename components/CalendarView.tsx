@@ -1,109 +1,64 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
-import EventStatusSummary from './EventStatusSummary';
-import TimelineOverview from './TimelineOverview';
-import CalendarIcon from './icons/CalendarIcon';
 import AllDayEventsBanner from './AllDayEventsBanner';
-import { useTheme } from '../contexts/ThemeContext';
+import TimelineOverview from './TimelineOverview';
+import EventStatusSummary from './EventStatusSummary';
+import ThemeToggle from './ThemeToggle';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
   onSignOut: () => void;
 }
 
-const getCurrentTimeHHMM = () => {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
-};
-
 const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
-  const theme = useTheme();
-  const [currentTime, setCurrentTime] = useState(getCurrentTimeHHMM());
-
-  useEffect(() => {
-    // Update time every minute
-    const timerId = setInterval(() => {
-      setCurrentTime(getCurrentTimeHHMM());
-    }, 1000 * 60);
-
-    return () => clearInterval(timerId);
-  }, []);
-  
-  // Separate all-day events from timed events
-  const allDayEvents = events.filter(e => e.isAllDay);
-  const timedEvents = events.filter(e => !e.isAllDay);
-
-  const getEventStatus = (event: CalendarEvent): 'past' | 'current' | 'upcoming' => {
-    if (currentTime > event.endTime) {
-      return 'past';
-    }
-    if (currentTime >= event.startTime && currentTime <= event.endTime) {
-      return 'current';
-    }
-    return 'upcoming';
-  };
-
-  const eventStatuses = timedEvents.map(getEventStatus);
-  const currentEvents = timedEvents.filter((_, index) => eventStatuses[index] === 'current');
-  const nextUpcomingEvent = timedEvents.find((_, index) => eventStatuses[index] === 'upcoming');
+  const allDayEvents = useMemo(() => events.filter(e => e.isAllDay), [events]);
+  const timedEvents = useMemo(() => events.filter(e => !e.isAllDay), [events]);
 
   return (
-    <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-8 font-sans">
-      <header className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-4 mb-6">
-        <div className="flex items-center gap-4">
-          <div className={`${theme.cardBg} ${theme.cardOpacity} rounded-lg p-3 shadow-md`}>
-             <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
-          </div>
-          <div>
-            <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText}`}>今日のスケジュール</h1>
-            <p className={theme.headerSubtext}>Googleカレンダーより</p>
-          </div>
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <header className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-20 border-b border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+                <h1 className="text-xl font-bold">今日のタイムライン</h1>
+                <div className="flex items-center space-x-4">
+                  <ThemeToggle />
+                    <button
+                        onClick={onSignOut}
+                        className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400"
+                    >
+                        サインアウト
+                    </button>
+                </div>
+            </div>
         </div>
-        <Clock />
       </header>
-      
-      <AllDayEventsBanner events={allDayEvents} />
 
-      <div className={`relative flex-grow ${theme.cardBg} rounded-lg shadow-lg p-6 mb-6 h-32 sm:h-48 flex items-center justify-center border-gray-200/50 overflow-hidden`}>
-        <EventStatusSummary currentEvents={currentEvents} />
-      </div>
-      
-      <main className="flex-grow flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-2/3">
-          <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
-        </div>
-
-        <div className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} rounded-lg shadow-lg p-6`}>
-          <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} mb-4 border-b border-gray-200 pb-2`}>
-            次の予定
-          </h2>
-          <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
-            {nextUpcomingEvent ? (
-              <div>
-                <p className={`font-display text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
-                <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
-              </div>
-            ) : (
-              <div className="flex-grow flex items-center justify-center">
-                <p className={`${theme.textMuted} text-lg sm:text-xl`}>今日の予定はすべて終了しました。</p>
-              </div>
-            )}
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div className="lg:col-span-1 flex flex-col justify-center items-center lg:items-start">
+              <Clock />
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                {new Date().toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  weekday: 'long',
+                })}
+              </p>
+            </div>
+            <div className="lg:col-span-2">
+              <EventStatusSummary events={events} />
+            </div>
           </div>
+          
+          <AllDayEventsBanner events={allDayEvents} />
+
+          <TimelineOverview events={timedEvents} />
         </div>
       </main>
-
-      <footer className="mt-auto pt-6 text-center">
-          <button 
-            onClick={onSignOut}
-            className={`${theme.headerText} opacity-80 hover:opacity-100 transition text-sm font-semibold`}
-          >
-            サインアウト
-          </button>
-      </footer>
     </div>
   );
 };

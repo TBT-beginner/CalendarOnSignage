@@ -1,97 +1,109 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { CalendarEvent } from '../types';
-import { useTheme } from '../contexts/ThemeContext';
 
 interface TimelineOverviewProps {
   events: CalendarEvent[];
-  eventStatuses: ('past' | 'current' | 'upcoming')[];
 }
 
-const ITEMS_PER_PAGE = 10;
+const START_HOUR = 8;
+const END_HOUR = 24;
+const HOUR_HEIGHT_PX = 60; // 1 hour = 60px
+const TOTAL_HOURS = END_HOUR - START_HOUR;
 
-const TimelineOverviewItem: React.FC<{ event: CalendarEvent, status: string }> = ({ event, status }) => {
-    const theme = useTheme();
-    const statusClasses = {
-        past: theme.textMuted + ' opacity-70',
-        current: theme.accentText + ' font-bold',
-        upcoming: theme.textPrimary,
-    };
-
-    return (
-        <div className={`flex items-start space-x-4 py-2 ${statusClasses[status]} transition-opacity duration-500`}>
-            <p className="font-display w-20 sm:w-24 flex-shrink-0 text-right text-base sm:text-lg">{event.startTime}</p>
-            <p className="flex-grow text-base sm:text-lg tracking-tight">{event.summary}</p>
-        </div>
-    );
+const timeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
 };
 
-const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatuses }) => {
-  const theme = useTheme();
-  const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Math.ceil(events.length / ITEMS_PER_PAGE);
+const minutesToPosition = (minutes: number): number => {
+  const startMinutes = START_HOUR * 60;
+  return ((minutes - startMinutes) / 60) * HOUR_HEIGHT_PX;
+};
+
+const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events }) => {
+  const [currentTimePosition, setCurrentTimePosition] = useState(0);
 
   useEffect(() => {
-    if (totalPages <= 1) return;
+    const updateCurrentTime = () => {
+      const now = new Date();
+      const minutes = now.getHours() * 60 + now.getMinutes();
+      setCurrentTimePosition(minutesToPosition(minutes));
+    };
+    updateCurrentTime();
+    const intervalId = setInterval(updateCurrentTime, 60000); // Update every minute
+    return () => clearInterval(intervalId);
+  }, []);
 
-    const timer = setInterval(() => {
-      setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
-    }, 10000); // Change page every 10 seconds
-
-    return () => clearInterval(timer);
-  }, [totalPages]);
-
-  const startIndex = currentPage * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedEvents = events.slice(startIndex, endIndex);
-  const paginatedStatuses = eventStatuses.slice(startIndex, endIndex);
-
-  const midPoint = Math.ceil(paginatedEvents.length / 2);
-  const leftColumnEvents = paginatedEvents.slice(0, midPoint);
-  const leftColumnStatuses = paginatedStatuses.slice(0, midPoint);
-  const rightColumnEvents = paginatedEvents.slice(midPoint);
-  const rightColumnStatuses = paginatedStatuses.slice(midPoint);
+  const timedEvents = useMemo(() => events.filter(e => !e.isAllDay), [events]);
 
   return (
-    <div className={`${theme.cardBg} rounded-lg shadow-lg p-4 flex flex-col h-full`}>
-      <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-gray-200 pb-2 flex-shrink-0`}>
-        今日のすべての予定
-      </h3>
-      <div className="custom-scrollbar overflow-y-auto flex-grow pr-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {/* Left Column */}
-            <div>
-              {leftColumnEvents.map((event, index) => (
-                <TimelineOverviewItem
-                  key={`overview-left-${event.summary}-${startIndex + index}`}
-                  event={event}
-                  status={leftColumnStatuses[index]}
-                />
-              ))}
+    <div className="relative">
+      {/* Timeline labels (hours) */}
+      <div className="absolute top-0 left-0 -ml-12 w-10 text-right text-xs text-gray-400">
+        {Array.from({ length: TOTAL_HOURS + 1 }).map((_, i) => {
+          const hour = START_HOUR + i;
+          return (
+            <div
+              key={`hour-${hour}`}
+              className="relative"
+              style={{ height: `${HOUR_HEIGHT_PX}px` }}
+            >
+              <span className="absolute -top-2">{`${hour}:00`}</span>
             </div>
-            {/* Right Column */}
-            <div>
-              {rightColumnEvents.map((event, index) => (
-                <TimelineOverviewItem
-                  key={`overview-right-${event.summary}-${startIndex + midPoint + index}`}
-                  event={event}
-                  status={rightColumnStatuses[index]}
-                />
-              ))}
+          );
+        })}
+      </div>
+
+      {/* Timeline grid */}
+      <div className="relative border-l border-gray-300 dark:border-gray-700 ml-5">
+        {Array.from({ length: TOTAL_HOURS }).map((_, i) => (
+          <div
+            key={`grid-${i}`}
+            className="border-t border-gray-300 dark:border-gray-700"
+            style={{ height: `${HOUR_HEIGHT_PX}px` }}
+          />
+        ))}
+
+        {/* Current time indicator */}
+        {currentTimePosition >= 0 && currentTimePosition <= TOTAL_HOURS * HOUR_HEIGHT_PX && (
+           <div
+            className="absolute left-0 w-full flex items-center"
+            style={{ top: `${currentTimePosition}px` }}
+            >
+                <div className="absolute -left-1.5 w-3 h-3 bg-red-500 rounded-full z-10"></div>
+                <div className="w-full border-t border-red-500"></div>
             </div>
+        )}
+
+        {/* Events */}
+        <div className="absolute top-0 left-2 right-0">
+          {timedEvents.map((event, index) => {
+            const startMinutes = timeToMinutes(event.startTime);
+            const endMinutes = timeToMinutes(event.endTime);
+            const top = minutesToPosition(startMinutes);
+            const height = minutesToPosition(endMinutes) - top;
+
+            if (height <= 0) return null;
+
+            return (
+              <div
+                key={index}
+                className="absolute w-full pr-2"
+                style={{
+                  top: `${top}px`,
+                  height: `${height}px`,
+                }}
+              >
+                <div className="h-full bg-blue-100 dark:bg-blue-900/50 p-2 rounded-lg border-l-4 border-blue-500 dark:border-blue-400">
+                  <p className="text-sm font-semibold text-blue-800 dark:text-blue-200">{event.summary}</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-300">{event.startTime} - {event.endTime}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-      {totalPages > 1 && (
-        <div className="flex justify-center space-x-2 pt-4 flex-shrink-0">
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <div
-              key={index}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                currentPage === index ? `${theme.paginationActive} w-6` : theme.paginationInactive
-              }`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 };
