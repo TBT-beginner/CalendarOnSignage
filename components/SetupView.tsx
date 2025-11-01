@@ -18,8 +18,16 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const ExclamationIcon = () => (
-  <svg className="h-6 w-6 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+// FIX: Update ExclamationIcon to accept props, allowing className to be passed for theming.
+const ExclamationIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ className, ...rest }) => (
+  <svg 
+    className={`h-6 w-6 flex-shrink-0 ${className ?? ''}`} 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 20 20" 
+    fill="currentColor" 
+    aria-hidden="true"
+    {...rest}
+  >
     <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
   </svg>
 );
@@ -42,16 +50,16 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
   return (
     <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${theme.textPrimary}`}>
       <div 
-        className={`w-full max-w-lg text-center ${theme.cardBg} rounded-3xl p-8 sm:p-12 transition-all`}
+        className={`w-full max-w-lg text-center ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-8 sm:p-12 transition-all`}
         style={{ boxShadow: theme.clayShadow }}
       >
         <div 
-          className={`mx-auto rounded-full w-28 h-28 flex items-center justify-center mb-8`}
+          className={`mx-auto rounded-full w-28 h-28 flex items-center justify-center mb-8 ${theme.buttonBorder}`}
           style={{ boxShadow: theme.clayButtonPressedShadow }}
         >
           <CalendarIcon className={`w-16 h-16 ${theme.accentText}`} />
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">Digital Calendar Signage</h1>
+        <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-2 ${theme.fontDisplay}`}>{theme.name === 'Pixel Art' ? 'Digital Cal-Signage' : 'Digital Calendar Signage'}</h1>
         <p className={`text-base sm:text-lg mb-8 ${theme.textSecondary}`}>
           見やすい、大きな文字で今日の予定を表示します。
         </p>
@@ -63,8 +71,8 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
           <button
             type="submit"
             disabled={!isGsiReady}
-            className={`w-full font-bold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.button} ${theme.buttonText} disabled:opacity-75 disabled:cursor-not-allowed`}
-            style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
+            className={`w-full font-bold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.button} ${theme.buttonText} ${theme.buttonBorder} disabled:opacity-75 disabled:cursor-not-allowed`}
+            style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out' }}
             onMouseDown={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
             onMouseUp={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
             onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
@@ -76,22 +84,24 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         
         {error && (
           <div className="mt-8 text-left text-sm">
-            <div className="bg-red-500/10 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg" role="alert">
+             <div className={`p-4 rounded-lg ${theme.name === 'Pixel Art' ? 'bg-fuchsia-400/10 border-l-4 border-fuchsia-400' : 'bg-red-500/10 border-l-4 border-red-500'}`} role="alert">
               <div className="flex">
-                <div className="py-1"><ExclamationIcon /></div>
-                <div className="ml-3 flex-1">
-                  <p className="font-bold text-red-700">Google認証エラー</p>
-                  <p className="text-red-800">サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
-                  <p className="mt-2 font-mono text-xs bg-red-500/20 text-red-900 p-2 rounded break-words">{error}</p>
+                <div className="py-1">
+                  <ExclamationIcon className={theme.name === 'Pixel Art' ? 'text-fuchsia-400' : 'text-red-500'} />
+                </div>
+                <div className={`ml-3 flex-1 ${theme.name === 'Pixel Art' ? 'text-fuchsia-200' : 'text-red-800'}`}>
+                  <p className={`font-bold ${theme.name === 'Pixel Art' ? 'text-fuchsia-100' : 'text-red-700'}`}>Google認証エラー</p>
+                  <p>サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
+                  <p className={`mt-2 font-mono text-xs p-2 rounded break-words ${theme.name === 'Pixel Art' ? 'bg-fuchsia-500/20 text-fuchsia-100' : 'bg-red-500/20 text-red-900'}`}>{error}</p>
                 </div>
               </div>
             </div>
             
             {(isOriginError || isClientIdError) && (
-              <div className={`mt-4 p-4 ${theme.cardBg} border border-black/10 rounded-lg text-gray-800`} style={{boxShadow: theme.clayShadow}}>
+              <div className={`mt-4 p-4 ${theme.cardBg} ${theme.cardBorder} rounded-lg`} style={{boxShadow: theme.clayShadow}}>
                 <h4 className={`font-bold text-base ${theme.textPrimary}`}>このエラーを解決するには</h4>
                 <div className="mt-2">
-                  <strong className={`block p-2 rounded border ${theme.accentBg} ${theme.accentText} border-current/20`}>もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
+                  <strong className={`block p-2 rounded ${theme.accentBg} ${theme.accentText} ${theme.name === 'Pixel Art' ? 'text-black' : ''} border-current/20`}>もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-black/10">
@@ -105,7 +115,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
                         <li>
                           <strong>以下のURLをコピーしてください:</strong>
                           <div className="flex items-center mt-1">
-                            <code className="bg-black/5 text-black/80 p-2 rounded-l font-mono text-xs break-all flex-grow">{window.location.origin}</code>
+                            <code className="bg-black/20 text-white/80 p-2 rounded-l font-mono text-xs break-all flex-grow">{window.location.origin}</code>
                             <button 
                               onClick={(e) => {
                                   e.preventDefault();
@@ -122,7 +132,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
                           </div>
                         </li>
                         <li>
-                          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 hover:text-blue-800">
+                          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline text-blue-400 hover:text-blue-300">
                             Google Cloud認証情報ページ
                           </a>
                           を開きます。

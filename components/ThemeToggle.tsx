@@ -33,7 +33,7 @@ const ThemeToggle: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`${theme.headerText} p-2 rounded-full transition-all focus:outline-none`}
+        className={`${theme.headerText} p-2 rounded-full transition-all focus:outline-none ${theme.buttonBorder}`}
         aria-label="テーマを切り替える"
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -47,7 +47,7 @@ const ThemeToggle: React.FC = () => {
 
       {isOpen && (
         <div
-          className={`absolute right-0 mt-2 w-56 origin-top-right rounded-2xl z-10 ${theme.cardBg} ring-1 ring-black ring-opacity-5`}
+          className={`absolute right-0 mt-2 w-56 origin-top-right rounded-2xl z-10 ${theme.cardBg} ${theme.cardBorder} ring-1 ring-black ring-opacity-5`}
           style={{ 
             animation: 'fadeIn 0.2s ease-out forwards',
             boxShadow: theme.clayShadow,
@@ -63,7 +63,7 @@ const ThemeToggle: React.FC = () => {
               >
                 <div className="flex items-center">
                   {themeObj && <span className={`w-4 h-4 rounded-full mr-3 inline-block ${themeObj.accentBg}`}></span>}
-                  <span>{name}</span>
+                  <span className={theme.name === 'Pixel Art' ? theme.fontDisplay : ''}>{name}</span>
                 </div>
 
                 {currentThemeName === key && (

@@ -21,7 +21,7 @@ const AllDayEventsBanner: React.FC<AllDayEventsBannerProps> = ({ events }) => {
 
   return (
     <div
-      className={`w-full ${bannerBg} ${bannerText} rounded-2xl p-3 mb-6 overflow-hidden flex items-center`}
+      className={`w-full ${bannerBg} ${bannerText} ${theme.buttonBorder} rounded-2xl p-3 mb-6 overflow-hidden flex items-center`}
       style={{ boxShadow: theme.clayButtonShadow }}
     >
       <div className="flex-shrink-0 mr-4">

@@ -46,6 +46,19 @@
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
+/* Pixel Art Theme Scrollbar */
+.theme-pixel-art .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 116, 139, 0.7); /* slate-500 */
+  border-radius: 0;
+}
+.theme-pixel-art .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 116, 139, 1); /* slate-500 */
+}
+.theme-pixel-art .custom-scrollbar {
+  scrollbar-color: rgba(100, 116, 139, 0.7) transparent;
+}
+
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -74,6 +87,10 @@ body {
 .font-display {
   font-family: 'Oswald', sans-serif;
   font-weight: 700; /* Use Oswald's bold weight for display text */
+}
+
+.theme-pixel-art .font-mono {
+  text-shadow: 0 0 3px currentColor;
 }
 </style>
 </head>

@@ -24,6 +24,11 @@ export interface Theme {
   bannerBg: string;
   bannerText: string;
   border: string;
+  cardBorder: string;
+  buttonBorder: string;
+  paginationShape: string;
+  checkboxShape: string;
+  fontDisplay: string;
 }
 
 const createNeumorphicTheme = (name: string, colors: {
@@ -62,6 +67,11 @@ const createNeumorphicTheme = (name: string, colors: {
     bannerBg: colors.bg,
     bannerText: `text-${colors.accent}`,
     border: `border-${colors.secondary}/10`,
+    cardBorder: '',
+    buttonBorder: '',
+    paginationShape: 'rounded-full',
+    checkboxShape: 'rounded-md',
+    fontDisplay: 'font-display',
   };
 };
 
@@ -98,6 +108,42 @@ const markerTheme: Theme = {
   bannerBg: 'bg-blue-500',
   bannerText: 'text-white',
   border: 'border-gray-200',
+  cardBorder: '',
+  buttonBorder: '',
+  paginationShape: 'rounded-full',
+  checkboxShape: 'rounded-md',
+  fontDisplay: 'font-display',
+};
+
+const pixelTheme: Theme = {
+  name: 'Pixel Art',
+  bg: 'bg-slate-900',
+  cardBg: 'bg-slate-800',
+  textPrimary: 'text-cyan-300',
+  textSecondary: 'text-slate-400',
+  textMuted: 'text-slate-500',
+  accentText: 'text-fuchsia-400',
+  accentBg: 'bg-fuchsia-400',
+  accentShadow: 'rgba(245, 83, 241, 0.3)',
+  headerText: 'text-cyan-300',
+  headerSubtext: 'text-slate-400',
+  button: 'bg-slate-800',
+  buttonText: 'text-cyan-300',
+  paginationActive: 'bg-fuchsia-400',
+  paginationInactive: 'bg-slate-700',
+  clayShadow: '4px 4px 0px #0f172a',
+  clayButtonShadow: '3px 3px 0px #0f172a',
+  clayButtonPressedShadow: 'inset 3px 3px 0px #0f172a',
+  hoverBg: 'hover:bg-slate-700',
+  selectionBg: 'bg-fuchsia-400/10',
+  bannerBg: 'bg-slate-800',
+  bannerText: 'text-fuchsia-400',
+  border: 'border-cyan-300/30',
+  cardBorder: 'border-2 border-cyan-300',
+  buttonBorder: 'border-2 border-cyan-300',
+  paginationShape: 'rounded-none',
+  checkboxShape: 'rounded-sm',
+  fontDisplay: 'font-mono',
 };
 
 const springTheme = createNeumorphicTheme('Spring', {
@@ -199,6 +245,7 @@ newYearTheme.selectionBg = 'bg-yellow-500/10';
 export const allThemes: Record<string, Theme> = {
   'Default': defaultTheme,
   'Marker': markerTheme,
+  'Pixel Art': pixelTheme,
   'Spring': springTheme,
   'Summer': summerTheme,
   'Autumn': autumnTheme,
@@ -258,7 +305,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     document.body.className = '';
-    document.body.classList.add(theme.bg);
+    const themeClassName = `theme-${theme.name.toLowerCase().replace(/ /g, '-')}`;
+    document.body.classList.add(theme.bg, themeClassName);
   }, [theme]);
 
   const value = { theme, changeTheme, currentThemeName: themeName };

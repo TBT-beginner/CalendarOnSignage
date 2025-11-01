@@ -51,11 +51,11 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
       style={{ animation: 'fadeIn 0.3s ease-out' }}
     >
       <div
-        className={`${theme.cardBg} w-full max-w-md rounded-3xl p-6 m-4 flex flex-col`}
+        className={`${theme.cardBg} ${theme.cardBorder} w-full max-w-md rounded-3xl p-6 m-4 flex flex-col`}
         style={{ boxShadow: theme.clayShadow }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className={`text-2xl font-bold mb-4 ${theme.textPrimary}`}>
+        <h2 className={`text-2xl font-bold mb-4 ${theme.textPrimary} ${theme.fontDisplay}`}>
           表示するカレンダーを選択
         </h2>
         <div className="flex-grow overflow-y-auto max-h-[60vh] custom-scrollbar pr-2 -mr-2">
@@ -66,7 +66,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
                   <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors hover:${theme.selectionBg} ${localSelectedIds.has(calendar.id) ? theme.selectionBg : ''}`}>
                     <input
                       type="checkbox"
-                      className={`h-5 w-5 rounded-md border-2 ${theme.border} ${theme.accentBg} focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
+                      className={`h-5 w-5 border-2 ${theme.checkboxShape} ${theme.border} ${theme.accentBg} focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
                       style={{ color: accentColorValue }}
                       checked={localSelectedIds.has(calendar.id)}
                       onChange={() => handleToggle(calendar.id)}
@@ -95,7 +95,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
           </button>
           <button
             onClick={handleSave}
-            className={`px-6 py-2 rounded-xl font-semibold transition-all ${theme.button} ${theme.buttonText}`}
+            className={`px-6 py-2 rounded-xl font-semibold transition-all ${theme.button} ${theme.buttonText} ${theme.buttonBorder}`}
             style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
             onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
             onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}

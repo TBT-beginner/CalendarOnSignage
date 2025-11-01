@@ -59,13 +59,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
           <div className="flex items-center gap-4 flex-shrink-0">
             <div 
-              className={`rounded-2xl p-3`}
+              className={`rounded-2xl p-3 ${theme.buttonBorder}`}
               style={{ boxShadow: theme.clayButtonShadow }}
              >
               <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
             </div>
             <div>
-              <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText}`}>今日のスケジュール</h1>
+              <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText} ${theme.fontDisplay}`}>今日のスケジュール</h1>
               <p className={theme.headerSubtext}>Googleカレンダーより</p>
             </div>
           </div>
@@ -73,7 +73,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             <ThemeToggle />
             <button
               onClick={onOpenCalendarSelection}
-              className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-all focus:outline-none`}
+              className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-all focus:outline-none ${theme.buttonBorder}`}
               aria-label="表示カレンダーの選択"
               style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
               onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
@@ -90,16 +90,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       { !hasSelectedCalendars && !isLoading ? (
         <div className="flex-grow flex items-center justify-center">
             <div 
-              className={`text-center ${theme.cardBg} rounded-3xl p-8 max-w-lg`}
+              className={`text-center ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-8 max-w-lg`}
               style={{ boxShadow: theme.clayShadow }}
             >
-                <h2 className={`text-2xl font-bold ${theme.textPrimary} mb-4`}>カレンダーが選択されていません</h2>
+                <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4`}>カレンダーが選択されていません</h2>
                 <p className={`${theme.textSecondary} mb-6`}>
                 ヘッダーの設定アイコンをクリックして、表示したいカレンダーを選択してください。
                 </p>
                 <button
                     onClick={onOpenCalendarSelection}
-                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText}`}
+                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonBorder}`}
                     style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
                     onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
                     onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
@@ -115,7 +115,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           <AllDayEventsBanner events={allDayEvents} />
 
           <div 
-            className={`relative flex-grow ${theme.cardBg} rounded-3xl p-6 mb-6 h-32 sm:h-48 flex items-center justify-center overflow-hidden`}
+            className={`relative flex-grow ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6 mb-6 h-32 sm:h-48 flex items-center justify-center overflow-hidden`}
             style={{ boxShadow: theme.clayShadow }}
           >
             <EventStatusSummary currentEvents={currentEvents} />
@@ -127,16 +127,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             </div>
 
             <div 
-              className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} rounded-3xl p-6`}
+              className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6`}
               style={{ boxShadow: theme.clayShadow }}
             >
-              <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} mb-4 border-b ${theme.border} pb-2`}>
+              <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2`}>
                 次の予定
               </h2>
               <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
                 {nextUpcomingEvent ? (
                   <div>
-                    <p className={`font-display text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
+                    <p className={`${theme.fontDisplay} text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
                     <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
                   </div>
                 ) : (

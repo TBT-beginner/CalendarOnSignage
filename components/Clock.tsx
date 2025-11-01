@@ -30,7 +30,7 @@ const Clock: React.FC = () => {
 
   return (
     <div className="w-full sm:w-auto text-center sm:text-right">
-      <div className={`font-display text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter ${theme.headerText}`}>
+      <div className={`${theme.fontDisplay} text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter ${theme.headerText}`}>
         {currentTime.toLocaleTimeString('ja-JP', timeOptions)}
       </div>
       <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext}`}>
