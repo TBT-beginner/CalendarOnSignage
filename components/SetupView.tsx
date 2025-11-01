@@ -35,10 +35,8 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
     }
   };
   
-  const iconBgClass = theme.name === 'Default' ? 'bg-orange-100' : theme.accentBg;
+  const iconBgClass = theme.name === 'Default' ? 'bg-orange-200' : theme.accentBg;
   const iconTextClass = theme.name === 'Default' ? 'text-orange-500' : theme.buttonText;
-  const iconBorderClass = theme.name === 'Default' ? 'border-orange-200' : 'border-transparent';
-  const opacityClass = theme.name === 'Default' ? '' : 'bg-opacity-20';
   
   const lowerError = error?.toLowerCase() ?? '';
   const isOriginError = ['origin', 'redirect_uri', 'redirect_uri_mismatch', 'invalid_request', 'storagerelay'].some(key => lowerError.includes(key));
@@ -46,8 +44,14 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
 
   return (
     <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${theme.textPrimary}`}>
-      <div className={`w-full max-w-lg text-center ${theme.cardBg} rounded-2xl shadow-2xl p-8 sm:p-12 transition-all`}>
-        <div className={`mx-auto rounded-full p-6 w-28 h-28 flex items-center justify-center mb-8 border-4 ${iconBgClass} ${iconBorderClass} ${opacityClass}`}>
+      <div 
+        className={`w-full max-w-lg text-center ${theme.cardBg} rounded-3xl p-8 sm:p-12 transition-all`}
+        style={{ boxShadow: theme.clayShadow }}
+      >
+        <div 
+          className={`mx-auto rounded-full w-28 h-28 flex items-center justify-center mb-8 ${iconBgClass}`}
+          style={{ boxShadow: theme.clayButtonPressedShadow }}
+        >
           <CalendarIcon className={`w-16 h-16 ${iconTextClass}`} />
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">Digital Calendar Signage</h1>
@@ -62,7 +66,11 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
           <button
             type="submit"
             disabled={!isGsiReady}
-            className={`w-full font-bold py-4 px-6 rounded-lg text-lg sm:text-xl transition-all transform hover:scale-105 flex items-center justify-center ${theme.button} ${theme.buttonHover} ${theme.buttonText} disabled:opacity-75 disabled:cursor-not-allowed disabled:scale-100`}
+            className={`w-full font-bold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.button} ${theme.buttonText} disabled:opacity-75 disabled:cursor-not-allowed`}
+            style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
+            onMouseDown={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
+            onMouseUp={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+            onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
           >
             <GoogleIcon />
             {isGsiReady ? 'Googleでサインイン' : '準備中...'}

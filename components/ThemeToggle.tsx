@@ -43,15 +43,18 @@ const ThemeToggle: React.FC = () => {
 
       {isOpen && (
         <div
-          className={`absolute right-0 mt-2 w-56 origin-top-right rounded-md shadow-lg z-10 ${theme.cardBg} ring-1 ring-black ring-opacity-5`}
-          style={{ animation: 'fadeIn 0.2s ease-out forwards' }}
+          className={`absolute right-0 mt-2 w-56 origin-top-right rounded-2xl z-10 ${theme.cardBg} ring-1 ring-black ring-opacity-5`}
+          style={{ 
+            animation: 'fadeIn 0.2s ease-out forwards',
+            boxShadow: theme.clayShadow,
+          }}
         >
           <div className="py-1 custom-scrollbar max-h-72 overflow-y-auto" role="menu" aria-orientation="vertical">
             {themeListForRender.map(({ name, key, themeObj }) => (
               <button
                 key={key}
                 onClick={() => handleThemeChange(key)}
-                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${theme.textPrimary} hover:${theme.accentBg} hover:${theme.buttonText}`}
+                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${theme.textPrimary} hover:bg-black/5`}
                 role="menuitem"
               >
                 <div className="flex items-center">

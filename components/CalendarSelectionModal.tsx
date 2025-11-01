@@ -49,7 +49,8 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
       style={{ animation: 'fadeIn 0.3s ease-out' }}
     >
       <div
-        className={`${theme.cardBg} w-full max-w-md rounded-xl shadow-2xl p-6 m-4 flex flex-col`}
+        className={`${theme.cardBg} w-full max-w-md rounded-3xl p-6 m-4 flex flex-col`}
+        style={{ boxShadow: theme.clayShadow }}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className={`text-2xl font-bold mb-4 ${theme.textPrimary}`}>
@@ -60,7 +61,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
             <ul className="space-y-2">
               {availableCalendars.map((calendar) => (
                 <li key={calendar.id}>
-                  <label className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors hover:bg-gray-500/10 ${localSelectedIds.has(calendar.id) ? 'bg-gray-500/20' : ''}`}>
+                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors hover:bg-black/5 ${localSelectedIds.has(calendar.id) ? 'bg-black/10' : ''}`}>
                     <input
                       type="checkbox"
                       className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
@@ -86,13 +87,17 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
         <div className="flex justify-end gap-4 pt-6 mt-auto">
           <button
             onClick={onClose}
-            className={`px-6 py-2 rounded-lg font-semibold transition-colors ${theme.textSecondary} hover:bg-gray-500/10`}
+            className={`px-6 py-2 rounded-xl font-semibold transition-colors ${theme.textSecondary} hover:bg-black/5`}
           >
             キャンセル
           </button>
           <button
             onClick={handleSave}
-            className={`px-6 py-2 rounded-lg font-semibold transition-all transform hover:scale-105 ${theme.button} ${theme.buttonHover} ${theme.buttonText}`}
+            className={`px-6 py-2 rounded-xl font-semibold transition-all ${theme.button} ${theme.buttonText}`}
+            style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
+            onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
+            onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
           >
             保存
           </button>

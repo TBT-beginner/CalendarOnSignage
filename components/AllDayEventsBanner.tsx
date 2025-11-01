@@ -16,11 +16,14 @@ const AllDayEventsBanner: React.FC<AllDayEventsBannerProps> = ({ events }) => {
 
   const marqueeDuration = events.length * 10;
 
-  const bannerBg = theme.name === 'Default' ? 'bg-orange-600' : theme.accentBg;
+  const bannerBg = theme.name === 'Default' ? 'bg-orange-500' : theme.accentBg;
   const bannerText = theme.name === 'Default' ? 'text-white' : theme.buttonText;
 
   return (
-    <div className={`w-full ${bannerBg} ${bannerText} rounded-lg shadow-md p-3 mb-6 overflow-hidden flex items-center`}>
+    <div
+      className={`w-full ${bannerBg} ${bannerText} rounded-2xl p-3 mb-6 overflow-hidden flex items-center`}
+      style={{ boxShadow: theme.clayButtonShadow }}
+    >
       <div className="flex-shrink-0 mr-4">
         <InformationIcon className="w-6 h-6" />
       </div>

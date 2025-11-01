@@ -18,10 +18,20 @@ function App() {
   const auth = useGoogleAuth();
 
   useEffect(() => {
-    const savedIds = localStorage.getItem('selectedCalendarIds');
-    if (savedIds) {
-      setSelectedCalendarIds(JSON.parse(savedIds));
-    } else {
+    try {
+      const savedIds = localStorage.getItem('selectedCalendarIds');
+      if (savedIds) {
+        const parsedIds = JSON.parse(savedIds);
+        if (Array.isArray(parsedIds)) {
+          setSelectedCalendarIds(parsedIds);
+        } else {
+          setSelectedCalendarIds([]);
+        }
+      } else {
+        setSelectedCalendarIds([]);
+      }
+    } catch (error) {
+      console.error("Failed to parse selected calendars from localStorage", error);
       setSelectedCalendarIds([]);
     }
   }, []);
@@ -59,6 +69,8 @@ function App() {
     auth.signOut();
     setEvents([]);
     setFetchError(null);
+    setSelectedCalendarIds([]);
+    localStorage.removeItem('selectedCalendarIds');
   };
 
   const handleOpenCalendarSelection = async () => {

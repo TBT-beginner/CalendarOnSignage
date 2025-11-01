@@ -42,8 +42,11 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
   
   if (events.length === 0) {
     return (
-      <div className={`${theme.cardBg} rounded-lg shadow-lg p-4 flex flex-col h-full`}>
-        <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-gray-200 pb-2 flex-shrink-0`}>
+      <div 
+        className={`${theme.cardBg} rounded-3xl p-4 flex flex-col h-full`}
+        style={{ boxShadow: theme.clayShadow }}
+      >
+        <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-black/10 pb-2 flex-shrink-0`}>
           今日のすべての予定
         </h3>
         <div className="flex-grow flex items-center justify-center">
@@ -65,8 +68,11 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
   const rightColumnStatuses = paginatedStatuses.slice(midPoint);
 
   return (
-    <div className={`${theme.cardBg} rounded-lg shadow-lg p-4 flex flex-col h-full`}>
-      <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-gray-200 pb-2 flex-shrink-0`}>
+    <div 
+      className={`${theme.cardBg} rounded-3xl p-4 flex flex-col h-full`}
+      style={{ boxShadow: theme.clayShadow }}
+    >
+      <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-black/10 pb-2 flex-shrink-0`}>
         今日のすべての予定
       </h3>
       <div className="custom-scrollbar overflow-y-auto flex-grow pr-2">
