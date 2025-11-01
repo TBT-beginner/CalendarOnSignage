@@ -13,6 +13,8 @@ interface CalendarViewProps {
   events: CalendarEvent[];
   onSignOut: () => void;
   onOpenCalendarSelection: () => void;
+  hasSelectedCalendars: boolean;
+  isLoading: boolean;
 }
 
 const getCurrentTimeHHMM = () => {
@@ -22,12 +24,11 @@ const getCurrentTimeHHMM = () => {
   return `${hours}:${minutes}`;
 };
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading }) => {
   const { theme } = useTheme();
   const [currentTime, setCurrentTime] = useState(getCurrentTimeHHMM());
 
   useEffect(() => {
-    // Update time every minute
     const timerId = setInterval(() => {
       setCurrentTime(getCurrentTimeHHMM());
     }, 1000 * 60);
@@ -35,7 +36,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
     return () => clearInterval(timerId);
   }, []);
   
-  // Separate all-day events from timed events
   const allDayEvents = events.filter(e => e.isAllDay);
   const timedEvents = events.filter(e => !e.isAllDay);
 
@@ -55,18 +55,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
 
   return (
     <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-8 font-sans">
-      <header className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-4 mb-6">
-        <div className="flex items-center gap-4">
-          <div className={`${theme.cardBg} ${theme.cardOpacity} rounded-lg p-3 shadow-md`}>
-             <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
+      <header className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6">
+        <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <div className={`${theme.cardBg} ${theme.cardOpacity} rounded-lg p-3 shadow-md`}>
+              <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
+            </div>
+            <div>
+              <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText}`}>今日のスケジュール</h1>
+              <p className={theme.headerSubtext}>Googleカレンダーより</p>
+            </div>
           </div>
-          <div>
-            <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText}`}>今日のスケジュール</h1>
-            <p className={theme.headerSubtext}>Googleカレンダーより</p>
-          </div>
-        </div>
-        <div className="flex items-start justify-center sm:justify-end gap-2 flex-wrap">
-          <Clock />
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
@@ -78,37 +77,61 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             </button>
           </div>
         </div>
+        <Clock />
       </header>
       
-      <AllDayEventsBanner events={allDayEvents} />
-
-      <div className={`relative flex-grow ${theme.cardBg} rounded-lg shadow-lg p-6 mb-6 h-32 sm:h-48 flex items-center justify-center border-gray-200/50 overflow-hidden`}>
-        <EventStatusSummary currentEvents={currentEvents} />
-      </div>
-      
-      <main className="flex-grow flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-2/3">
-          <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
+      { !hasSelectedCalendars && !isLoading ? (
+        <div className="flex-grow flex items-center justify-center">
+            <div className={`text-center ${theme.cardBg} rounded-lg shadow-lg p-8 max-w-lg`}>
+                <h2 className={`text-2xl font-bold ${theme.textPrimary} mb-4`}>カレンダーが選択されていません</h2>
+                <p className={`${theme.textSecondary} mb-6`}>
+                ヘッダーの設定アイコンをクリックして、表示したいカレンダーを選択してください。
+                </p>
+                <button
+                    onClick={onOpenCalendarSelection}
+                    className={`px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 flex items-center mx-auto ${theme.button} ${theme.buttonHover} ${theme.buttonText}`}
+                >
+                    <SettingsIcon className="w-5 h-5 mr-2" />
+                    カレンダーを選択
+                </button>
+            </div>
         </div>
+      ) : (
+        <>
+          <AllDayEventsBanner events={allDayEvents} />
 
-        <div className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} rounded-lg shadow-lg p-6`}>
-          <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} mb-4 border-b border-gray-200 pb-2`}>
-            次の予定
-          </h2>
-          <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
-            {nextUpcomingEvent ? (
-              <div>
-                <p className={`font-display text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
-                <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
-              </div>
-            ) : (
-              <div className="flex-grow flex items-center justify-center">
-                <p className={`${theme.textMuted} text-lg sm:text-xl`}>今日の予定はすべて終了しました。</p>
-              </div>
-            )}
+          <div className={`relative flex-grow ${theme.cardBg} rounded-lg shadow-lg p-6 mb-6 h-32 sm:h-48 flex items-center justify-center border-gray-200/50 overflow-hidden`}>
+            <EventStatusSummary currentEvents={currentEvents} />
           </div>
-        </div>
-      </main>
+          
+          <main className="flex-grow flex flex-col lg:flex-row gap-6">
+            <div className="w-full lg:w-2/3">
+              <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
+            </div>
+
+            <div className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} rounded-lg shadow-lg p-6`}>
+              <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} mb-4 border-b border-gray-200 pb-2`}>
+                次の予定
+              </h2>
+              <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
+                {nextUpcomingEvent ? (
+                  <div>
+                    <p className={`font-display text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
+                    <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
+                  </div>
+                ) : (
+                  <div className="flex-grow flex items-center justify-center">
+                    <p className={`${theme.textMuted} text-lg sm:text-xl`}>
+                      {isLoading ? '予定を読み込んでいます...' : (events.length > 0 ? '今日の予定はすべて終了しました。' : '今日の予定はありません。')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </main>
+        </>
+      )}
+
 
       <footer className="mt-auto pt-6 text-center">
           <button 

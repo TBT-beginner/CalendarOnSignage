@@ -9,7 +9,7 @@ import CalendarSelectionModal from './components/CalendarSelectionModal';
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
   const [availableCalendars, setAvailableCalendars] = useState<CalendarListEntry[]>([]);
@@ -22,7 +22,7 @@ function App() {
     if (savedIds) {
       setSelectedCalendarIds(JSON.parse(savedIds));
     } else {
-      setSelectedCalendarIds(['primary']);
+      setSelectedCalendarIds([]);
     }
   }, []);
 
@@ -45,8 +45,9 @@ function App() {
       } finally {
         setIsLoading(false);
       }
-    } else if (selectedCalendarIds.length === 0) {
+    } else {
       setEvents([]);
+      setIsLoading(false);
     }
   }, [auth.accessToken, selectedCalendarIds, auth.signOut]);
 
@@ -94,6 +95,8 @@ function App() {
             events={events}
             onSignOut={handleSignOut}
             onOpenCalendarSelection={handleOpenCalendarSelection}
+            hasSelectedCalendars={selectedCalendarIds.length > 0}
+            isLoading={isLoading}
           />
           <CalendarSelectionModal
             isOpen={isCalendarModalOpen}

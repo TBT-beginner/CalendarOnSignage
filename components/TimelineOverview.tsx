@@ -39,6 +39,19 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
 
     return () => clearInterval(timer);
   }, [totalPages]);
+  
+  if (events.length === 0) {
+    return (
+      <div className={`${theme.cardBg} rounded-lg shadow-lg p-4 flex flex-col h-full`}>
+        <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-gray-200 pb-2 flex-shrink-0`}>
+          今日のすべての予定
+        </h3>
+        <div className="flex-grow flex items-center justify-center">
+          <p className={`${theme.textMuted} text-lg`}>今日の予定はありません。</p>
+        </div>
+      </div>
+    );
+  }
 
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;

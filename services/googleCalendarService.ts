@@ -90,7 +90,8 @@ export const fetchGoogleCalendarEvents = async (accessToken: string, calendarIds
             console.warn(`カレンダーID "${calendarId}" が見つかりません。アクセス権限を確認してください。`);
             return null; // Return null to ignore this calendar
         }
-        throw new Error(`カレンダー "${calendarId}" のデータ取得に失敗しました。権限がない可能性があります。`);
+        console.warn(`カレンダー "${calendarId}" のデータ取得に失敗しました。権限がない可能性があります。`);
+        return null; // Also ignore on other errors like 403 Forbidden
       }
       return response.json();
     });
