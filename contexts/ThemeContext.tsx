@@ -146,6 +146,38 @@ const pixelTheme: Theme = {
   fontDisplay: 'font-mono',
 };
 
+const eightiesPrintTheme: Theme = {
+  name: '80s Print',
+  bg: 'bg-[#FDF6E4]', // Cream
+  cardBg: 'bg-[#FDF6E4]',
+  textPrimary: 'text-[#2E2E2E]', // Dark Gray
+  textSecondary: 'text-[#616161]', // Medium Gray
+  textMuted: 'text-[#9E9E9E]', // Light Gray
+  accentText: 'text-[#D93025]', // Retro Red
+  accentBg: 'bg-[#D93025]',
+  accentShadow: 'none',
+  headerText: 'text-[#2E2E2E]',
+  headerSubtext: 'text-[#616161]',
+  button: 'bg-[#FDF6E4]',
+  buttonText: 'text-[#2E2E2E]',
+  paginationActive: 'bg-[#2E2E2E]',
+  paginationInactive: 'bg-[#BDBDBD]',
+  clayShadow: '4px 4px 0px #2E2E2E', // Simple block shadow
+  clayButtonShadow: '2px 2px 0px #2E2E2E',
+  clayButtonPressedShadow: '1px 1px 0px #2E2E2E', // Pressed effect
+  hoverBg: 'hover:bg-[#FBC02D]/50', // Retro Yellow hover
+  selectionBg: 'bg-[#FBC02D]/50',
+  bannerBg: 'bg-[#4285F4]', // Retro Blue
+  bannerText: 'text-white',
+  border: 'border-[#2E2E2E]/50',
+  cardBorder: 'border-2 border-[#2E2E2E]',
+  buttonBorder: 'border-2 border-[#2E2E2E]',
+  paginationShape: 'rounded-none',
+  checkboxShape: 'rounded-none',
+  fontDisplay: 'font-display',
+};
+
+
 const springTheme = createNeumorphicTheme('Spring', {
   bg: 'bg-emerald-50',
   primary: 'emerald-900',
@@ -246,6 +278,7 @@ export const allThemes: Record<string, Theme> = {
   'Default': defaultTheme,
   'Marker': markerTheme,
   'Pixel Art': pixelTheme,
+  '80s Print': eightiesPrintTheme,
   'Spring': springTheme,
   'Summer': summerTheme,
   'Autumn': autumnTheme,
