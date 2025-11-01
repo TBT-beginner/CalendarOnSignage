@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 export interface Theme {
   name: string;
@@ -291,6 +291,7 @@ export const allThemes: Record<string, Theme> = {
 };
 
 const AUTO_THEME_KEY = 'auto';
+export const SURPRISE_ME_KEY = 'surprise_me';
 
 const getCurrentTheme = (): Theme => {
   const now = new Date();
@@ -311,6 +312,80 @@ const getCurrentTheme = (): Theme => {
   return defaultTheme;
 };
 
+// --- Surprise Me! Theme Generation ---
+// FIX: Add generic type parameter <T> to resolve "Cannot find name 'T'" error.
+// In a .tsx file, <T> can be ambiguous with a JSX tag. A trailing comma <T,> clarifies it's a generic type parameter.
+const getRandomElement = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+const createRandomTheme = (): Theme => {
+    const isDark = Math.random() < 0.5;
+
+    // --- Colors ---
+    const lightBgs = ['bg-slate-100', 'bg-stone-100', 'bg-amber-50', 'bg-emerald-50', 'bg-sky-100', 'bg-rose-50', 'bg-[#FDF6E4]'];
+    const darkBgs = ['bg-slate-900', 'bg-gray-900', 'bg-zinc-800', 'bg-neutral-900'];
+    const textForLightBg = ['text-stone-800', 'text-gray-900', 'text-slate-800', 'text-[#2E2E2E]'];
+    const textForDarkBg = ['text-stone-100', 'text-gray-100', 'text-cyan-300', 'text-amber-200'];
+    const accents = [
+        { text: 'text-orange-500', bg: 'bg-orange-500', shadow: 'rgba(249, 115, 22, 0.3)' },
+        { text: 'text-sky-600', bg: 'bg-sky-600', shadow: 'rgba(2, 132, 199, 0.3)' },
+        { text: 'text-emerald-500', bg: 'bg-emerald-500', shadow: 'rgba(16, 185, 129, 0.3)' },
+        { text: 'text-red-600', bg: 'bg-red-600', shadow: 'rgba(220, 38, 38, 0.3)' },
+        { text: 'text-fuchsia-400', bg: 'bg-fuchsia-400', shadow: 'rgba(245, 83, 241, 0.3)' },
+    ];
+    
+    const bg = isDark ? getRandomElement(darkBgs) : getRandomElement(lightBgs);
+    const textPrimary = isDark ? getRandomElement(textForDarkBg) : getRandomElement(textForLightBg);
+    const accent = getRandomElement(accents);
+    const textSecondary = textPrimary.replace('800', '600').replace('900', '700').replace('100', '300').replace('200', '400');
+    const textMuted = textSecondary + '/70';
+
+    // --- Shadows ---
+    const shadowStyles = [
+        { name: 'blocky', val: { clayShadow: '6px 6px 0px rgba(0,0,0,0.8)', clayButtonShadow: '3px 3px 0px rgba(0,0,0,0.8)', clayButtonPressedShadow: '1px 1px 0px rgba(0,0,0,0.8)' } },
+        { name: 'neumorphic', val: isDark 
+            ? { clayShadow: '10px 10px 20px rgba(0,0,0,0.4)', clayButtonShadow: '5px 5px 10px rgba(0,0,0,0.4)', clayButtonPressedShadow: 'inset 5px 5px 10px rgba(0,0,0,0.4)' }
+            : { clayShadow: '10px 10px 20px rgba(0,0,0,0.08)', clayButtonShadow: '5px 5px 10px rgba(0,0,0,0.08)', clayButtonPressedShadow: 'inset 5px 5px 10px rgba(0,0,0,0.08)' } },
+        { name: 'flat', val: { clayShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', clayButtonShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', clayButtonPressedShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)' } },
+        { name: 'none', val: { clayShadow: 'none', clayButtonShadow: 'none', clayButtonPressedShadow: 'none' } }
+    ];
+    const shadows = getRandomElement(shadowStyles).val;
+
+    // --- Borders ---
+    const borderStyles = [
+        { card: `border-2 ${accent.bg.replace('bg-', 'border-')}/50`, button: `border-2 ${accent.bg.replace('bg-', 'border-')}/50` },
+        { card: 'border-2 border-current/20', button: 'border-2 border-current/20' },
+        { card: '', button: '' }
+    ];
+    const borders = getRandomElement(borderStyles);
+
+    // --- Shapes & Fonts ---
+    const shapes = ['rounded-full', 'rounded-2xl', 'rounded-lg', 'rounded-sm', 'rounded-none'];
+    const fonts = ['font-display', 'font-mono', 'font-sans'];
+    const shape = getRandomElement(shapes);
+    const font = getRandomElement(fonts);
+
+    return {
+        name: 'Surprise Me!',
+        bg, cardBg: bg, textPrimary, textSecondary, textMuted,
+        accentText: accent.text, accentBg: accent.bg, accentShadow: accent.shadow,
+        headerText: textPrimary, headerSubtext: textSecondary,
+        button: bg, buttonText: accent.text,
+        paginationActive: accent.bg, paginationInactive: isDark ? 'bg-white/10' : 'bg-black/10',
+        ...shadows,
+        hoverBg: 'opacity-80',
+        selectionBg: accent.bg + '/10',
+        bannerBg: accent.bg,
+        bannerText: isDark ? 'text-black' : 'text-white',
+        border: 'border-current/10',
+        cardBorder: borders.card, buttonBorder: borders.button,
+        paginationShape: shape,
+        checkboxShape: shape === 'rounded-full' ? 'rounded-md' : shape,
+        fontDisplay: font,
+    };
+};
+// ------------------------------------
+
+
 interface ThemeContextType {
   theme: Theme;
   changeTheme: (themeName: string) => void;
@@ -320,29 +395,43 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [themeName, setThemeName] = useState<string>(() => {
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [currentThemeName, setCurrentThemeName] = useState<string>(() => {
     return localStorage.getItem('selectedTheme') || AUTO_THEME_KEY;
   });
 
-  const changeTheme = (newThemeName: string) => {
-    setThemeName(newThemeName);
-    localStorage.setItem('selectedTheme', newThemeName);
-  };
-
-  const theme: Theme = useMemo(() => {
-    if (themeName === AUTO_THEME_KEY) {
-      return getCurrentTheme();
+  const changeTheme = useCallback((themeName: string) => {
+    if (themeName === SURPRISE_ME_KEY) {
+      const newTheme = createRandomTheme();
+      setTheme(newTheme);
+    } else if (themeName === AUTO_THEME_KEY) {
+      setTheme(getCurrentTheme());
+    } else {
+      setTheme(allThemes[themeName] || defaultTheme);
     }
-    return allThemes[themeName] || getCurrentTheme();
-  }, [themeName]);
-
+    setCurrentThemeName(themeName);
+    localStorage.setItem('selectedTheme', themeName);
+  }, []);
+  
+  useEffect(() => {
+    const storedThemeName = localStorage.getItem('selectedTheme') || AUTO_THEME_KEY;
+    changeTheme(storedThemeName);
+    
+    if (storedThemeName === AUTO_THEME_KEY) {
+      const intervalId = setInterval(() => {
+        setTheme(getCurrentTheme());
+      }, 1000 * 60 * 5); // Check every 5 minutes
+      return () => clearInterval(intervalId);
+    }
+  }, [changeTheme]);
+  
   useEffect(() => {
     document.body.className = '';
-    const themeClassName = `theme-${theme.name.toLowerCase().replace(/ /g, '-')}`;
+    const themeClassName = `theme-${theme.name.toLowerCase().replace(/ /g, '-').replace(/[!#]/g, '')}`;
     document.body.classList.add(theme.bg, themeClassName);
   }, [theme]);
 
-  const value = { theme, changeTheme, currentThemeName: themeName };
+  const value = { theme, changeTheme, currentThemeName };
 
   return (
     <ThemeContext.Provider value={value}>
