@@ -21,6 +21,8 @@ export interface Theme {
   clayButtonPressedShadow: string;
   hoverBg: string;
   selectionBg: string;
+  bannerBg: string;
+  bannerText: string;
 }
 
 const defaultTheme: Theme = {
@@ -44,6 +46,8 @@ const defaultTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(194, 126, 50, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-orange-500',
+  bannerText: 'text-white',
 };
 
 const springTheme: Theme = {
@@ -67,6 +71,8 @@ const springTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(212, 122, 147, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-pink-400',
+  bannerText: 'text-white',
 };
 
 const summerTheme: Theme = {
@@ -90,6 +96,8 @@ const summerTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(50, 138, 194, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-yellow-400',
+  bannerText: 'text-blue-900',
 };
 
 const autumnTheme: Theme = {
@@ -113,6 +121,8 @@ const autumnTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(194, 142, 50, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-red-600',
+  bannerText: 'text-white',
 };
 
 const winterTheme: Theme = {
@@ -136,6 +146,8 @@ const winterTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(136, 150, 164, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-sky-500',
+  bannerText: 'text-white',
 };
 
 const matchaTheme: Theme = {
@@ -159,6 +171,8 @@ const matchaTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(67, 138, 114, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-emerald-700',
+  bannerText: 'text-white',
 };
 
 const zenTheme: Theme = {
@@ -182,6 +196,8 @@ const zenTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(136, 150, 164, 0.25)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-slate-800',
+  bannerText: 'text-white',
 };
 
 const halloweenTheme: Theme = {
@@ -205,6 +221,8 @@ const halloweenTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(25, 33, 46, 0.5)',
   hoverBg: 'hover:bg-white/10',
   selectionBg: 'bg-white/10',
+  bannerBg: 'bg-purple-700',
+  bannerText: 'text-orange-300',
 };
 
 
@@ -229,6 +247,8 @@ const christmasTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(142, 36, 36, 0.5)',
   hoverBg: 'hover:bg-white/10',
   selectionBg: 'bg-white/10',
+  bannerBg: 'bg-green-700',
+  bannerText: 'text-yellow-200',
 };
 
 
@@ -253,6 +273,8 @@ const newYearTheme: Theme = {
   clayButtonPressedShadow: 'inset 5px 5px 10px rgba(204, 151, 151, 0.5)',
   hoverBg: 'hover:bg-black/10',
   selectionBg: 'bg-black/10',
+  bannerBg: 'bg-red-600',
+  bannerText: 'text-yellow-300',
 };
 
 export const allThemes: Record<string, Theme> = {

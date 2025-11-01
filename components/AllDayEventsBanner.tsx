@@ -16,8 +16,8 @@ const AllDayEventsBanner: React.FC<AllDayEventsBannerProps> = ({ events }) => {
 
   const marqueeDuration = events.length * 10;
 
-  const bannerBg = theme.name === 'Default' ? 'bg-orange-500' : theme.accentBg;
-  const bannerText = theme.name === 'Default' ? 'text-white' : theme.buttonText;
+  const bannerBg = theme.bannerBg;
+  const bannerText = theme.bannerText;
 
   return (
     <div
