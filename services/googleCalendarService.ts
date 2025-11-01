@@ -1,3 +1,4 @@
+
 import { CalendarEvent } from '../types';
 
 // 表示したいカレンダーのIDリスト
@@ -77,6 +78,7 @@ export const fetchGoogleCalendarEvents = async (accessToken: string): Promise<Ca
         summary: item.summary || '（タイトルなし）',
         startTime: formatApiTime(item.start),
         endTime: formatApiTime(item.end, true),
+        isAllDay: !!item.start.date, // If 'date' property exists, it's an all-day event
       }));
       allEvents.push(...events);
     }

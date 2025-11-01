@@ -41,7 +41,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
   const opacityClass = theme.name === 'Default' ? '' : 'bg-opacity-20';
   
   const lowerError = error?.toLowerCase() ?? '';
-  const isOriginError = ['origin', 'redirect_uri', 'invalid_request', 'storagerelay'].some(key => lowerError.includes(key));
+  const isOriginError = ['origin', 'redirect_uri', 'redirect_uri_mismatch', 'invalid_request', 'storagerelay'].some(key => lowerError.includes(key));
   const isClientIdError = lowerError.includes('g.co/dev/eerst');
 
   return (
@@ -70,62 +70,72 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         </form>
         
         {error && (
-          <div className="mt-6 text-red-800 bg-red-100 p-4 rounded-lg text-sm text-left border border-red-300">
-            <div className="flex items-start">
-              <ExclamationIcon />
-              <div className="ml-3 flex-1">
-                <h3 className="font-bold text-red-900">Google認証設定が必要です</h3>
-                <p className="mt-1 font-mono text-xs bg-red-200 text-red-900 p-2 rounded break-words">{error}</p>
+          <div className="mt-8 text-left text-sm">
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg" role="alert">
+              <div className="flex">
+                <div className="py-1"><ExclamationIcon /></div>
+                <div className="ml-3 flex-1">
+                  <p className="font-bold text-red-900">Google認証エラー</p>
+                  <p className="text-red-900">サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
+                  <p className="mt-2 font-mono text-xs bg-red-200 text-red-900 p-2 rounded break-words">{error}</p>
+                </div>
               </div>
             </div>
-
+            
             {(isOriginError || isClientIdError) && (
-              <div className="mt-4 pt-3 border-t border-red-200 text-xs">
-                <strong className="block mb-2 text-base text-gray-800">開発者の方へ：このエラーの解決方法</strong>
-                <p className="mb-3">このエラーは、Google Cloud Consoleの認証情報設定が正しくないために発生しています。以下の手順で設定を確認・修正してください。</p>
-                <p className="mb-4 p-2 bg-yellow-100 text-yellow-900 rounded-md border border-yellow-200">
-                  もし開発者でない場合は、このメッセージ全体をコピーまたはスクリーンショットして、アプリケーションの管理者または開発担当者にお伝えください。
-                </p>
+              <div className="mt-4 p-4 bg-gray-50 border border-gray-300 rounded-lg text-gray-800">
+                <h4 className="font-bold text-gray-900 text-base">このエラーを解決するには</h4>
+                <div className="mt-2">
+                  <strong className="block p-2 bg-blue-100 text-blue-900 rounded border border-blue-200">もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
+                </div>
 
-                {isOriginError && (
-                  <div>
-                    <strong className="block mb-1 text-gray-700">原因：承認されていないURL（オリジン）からのアクセス</strong>
-                    <p>Googleのセキュリティポリシーにより、登録されたURLからのみ認証が許可されます。</p>
-                    <ol className="list-decimal list-inside my-2 space-y-1.5 pl-2">
-                      <li>
-                        <strong>以下のURLをコピーしてください:</strong>
-                        <div className="flex items-center mt-1">
-                          <code className="bg-red-200 text-red-900 p-1.5 rounded-l font-mono text-[11px] break-all flex-grow">{window.location.origin}</code>
-                          <button 
-                            onClick={(e) => {
-                                e.preventDefault();
-                                navigator.clipboard.writeText(window.location.origin);
-                            }}
-                            className="bg-red-300 text-red-900 font-bold p-1.5 rounded-r hover:bg-red-400 transition-colors text-xs"
-                          >
-                            コピー
-                          </button>
-                        </div>
-                      </li>
-                      <li>
-                        <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-800">
-                          Google Cloudの認証情報ページ
-                        </a>
-                        を開きます。
-                      </li>
-                      <li>お使いの「OAuth 2.0 クライアント ID」を選択します。</li>
-                      <li>「承認済みのJavaScript生成元」に、先ほどコピーしたURLを追加して保存します。</li>
-                    </ol>
-                    <p className="mt-2"><strong>注意:</strong> 設定の反映には数分かかることがあります。反映後にページを再読み込みしてください。</p>
-                  </div>
-                )}
-
-                {isClientIdError && (
-                     <div className="text-xs mt-3 pt-3 border-t border-red-200">
-                        <strong className="block mb-1 text-gray-700">原因：クライアントIDが無効です</strong>
-                        <p>クライアントIDが無効か、削除されていることを示します。<code>hooks/useGoogleAuth.ts</code> ファイル内の <code>GOOGLE_CLIENT_ID</code> が、Google Cloud Consoleで作成したものと一致しているか確認してください。</p>
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <strong className="block text-base text-gray-800">開発者向け情報：</strong>
+                  
+                  {isOriginError && (
+                    <div className="mt-2">
+                      <p className="font-semibold text-gray-700">原因: 承認されていないURL (JavaScript生成元)</p>
+                      <p className="mt-1 text-gray-600">Googleのセキュリティポリシーにより、事前に登録されたURLからのみ認証リクエストが許可されます。現在のURLが登録されていないようです。</p>
+                      <ol className="list-decimal list-inside my-3 space-y-2 text-gray-700">
+                        <li>
+                          <strong>以下のURLをコピーしてください:</strong>
+                          <div className="flex items-center mt-1">
+                            <code className="bg-gray-200 text-gray-900 p-2 rounded-l font-mono text-xs break-all flex-grow">{window.location.origin}</code>
+                            <button 
+                              onClick={(e) => {
+                                  e.preventDefault();
+                                  navigator.clipboard.writeText(window.location.origin);
+                                  const originalText = 'コピー';
+                                  const button = e.currentTarget;
+                                  button.textContent = 'コピー完了!';
+                                  setTimeout(() => { button.textContent = originalText; }, 2000);
+                              }}
+                              className="bg-gray-600 text-white font-bold py-2 px-3 rounded-r hover:bg-gray-700 transition-colors text-xs w-20 text-center"
+                            >
+                              コピー
+                            </button>
+                          </div>
+                        </li>
+                        <li>
+                          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 hover:text-blue-800">
+                            Google Cloud認証情報ページ
+                          </a>
+                          を開きます。
+                        </li>
+                        <li>プロジェクトの「OAuth 2.0 クライアント ID」を選択します。</li>
+                        <li>「承認済みのJavaScript生成元」セクションで「+ URI を追加」をクリックし、コピーしたURLを貼り付けて保存します。</li>
+                      </ol>
+                      <p className="text-xs text-gray-500"><strong>注意:</strong> 設定の反映には数分かかることがあります。反映後にページを再読み込みしてください。</p>
                     </div>
-                )}
+                  )}
+
+                  {isClientIdError && (
+                       <div className="mt-3 pt-3 border-t border-gray-200">
+                          <p className="font-semibold text-gray-700">原因：クライアントIDが無効</p>
+                          <p className="mt-1 text-gray-600">クライアントIDが無効か、削除されているようです。<code>hooks/useGoogleAuth.ts</code> ファイル内の <code>GOOGLE_CLIENT_ID</code> が、Google Cloud Consoleで作成したものと一致しているか確認してください。</p>
+                      </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

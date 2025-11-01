@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
 import EventStatusSummary from './EventStatusSummary';
 import TimelineOverview from './TimelineOverview';
 import CalendarIcon from './icons/CalendarIcon';
+import AllDayEventsBanner from './AllDayEventsBanner';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface CalendarViewProps {
@@ -30,6 +32,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
 
     return () => clearInterval(timerId);
   }, []);
+  
+  // Separate all-day events from timed events
+  const allDayEvents = events.filter(e => e.isAllDay);
+  const timedEvents = events.filter(e => !e.isAllDay);
 
   const getEventStatus = (event: CalendarEvent): 'past' | 'current' | 'upcoming' => {
     if (currentTime > event.endTime) {
@@ -41,9 +47,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
     return 'upcoming';
   };
 
-  const eventStatuses = events.map(getEventStatus);
-  const currentEvents = events.filter((_, index) => eventStatuses[index] === 'current');
-  const nextUpcomingEvent = events.find((_, index) => eventStatuses[index] === 'upcoming');
+  const eventStatuses = timedEvents.map(getEventStatus);
+  const currentEvents = timedEvents.filter((_, index) => eventStatuses[index] === 'current');
+  const nextUpcomingEvent = timedEvents.find((_, index) => eventStatuses[index] === 'upcoming');
 
   return (
     <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-8 font-sans">
@@ -59,6 +65,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
         </div>
         <Clock />
       </header>
+      
+      <AllDayEventsBanner events={allDayEvents} />
 
       <div className={`relative flex-grow ${theme.cardBg} rounded-lg shadow-lg p-6 mb-6 h-32 sm:h-48 flex items-center justify-center border-gray-200/50 overflow-hidden`}>
         <EventStatusSummary currentEvents={currentEvents} />
@@ -66,7 +74,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
       
       <main className="flex-grow flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-2/3">
-          <TimelineOverview events={events} eventStatuses={eventStatuses} />
+          <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
         </div>
 
         <div className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} rounded-lg shadow-lg p-6`}>
