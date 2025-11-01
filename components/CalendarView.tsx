@@ -59,7 +59,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
           <div className="flex items-center gap-4 flex-shrink-0">
             <div 
-              className={`${theme.cardBg} rounded-2xl p-3`}
+              className={`rounded-2xl p-3`}
               style={{ boxShadow: theme.clayButtonShadow }}
              >
               <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
@@ -73,8 +73,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             <ThemeToggle />
             <button
               onClick={onOpenCalendarSelection}
-              className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
+              className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-all focus:outline-none`}
               aria-label="表示カレンダーの選択"
+              style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
+              onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
+              onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+              onMouseLeave={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
             >
               <SettingsIcon className="w-6 h-6" />
             </button>
@@ -126,7 +130,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
               className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} rounded-3xl p-6`}
               style={{ boxShadow: theme.clayShadow }}
             >
-              <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} mb-4 border-b border-black/10 pb-2`}>
+              <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} mb-4 border-b ${theme.border} pb-2`}>
                 次の予定
               </h2>
               <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
@@ -152,7 +156,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       <footer className="mt-auto pt-6 text-center">
           <button 
             onClick={onSignOut}
-            className={`${theme.headerText} opacity-80 hover:opacity-100 transition text-sm font-semibold`}
+            className={`${theme.textMuted} hover:${theme.textPrimary} transition text-sm font-semibold`}
           >
             サインアウト
           </button>

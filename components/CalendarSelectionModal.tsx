@@ -41,6 +41,8 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
   if (!isOpen) {
     return null;
   }
+  
+  const accentColorValue = theme.accentText.replace('text-', '');
 
   return (
     <div
@@ -61,11 +63,11 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
             <ul className="space-y-2">
               {availableCalendars.map((calendar) => (
                 <li key={calendar.id}>
-                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors ${theme.hoverBg} ${localSelectedIds.has(calendar.id) ? theme.selectionBg : ''}`}>
+                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors hover:${theme.selectionBg} ${localSelectedIds.has(calendar.id) ? theme.selectionBg : ''}`}>
                     <input
                       type="checkbox"
-                      className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                      style={{ accentColor: theme.accentBg.replace('bg-','').split('-')[0] }}
+                      className={`h-5 w-5 rounded-md border-2 ${theme.border} ${theme.accentBg} focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
+                      style={{ color: accentColorValue }}
                       checked={localSelectedIds.has(calendar.id)}
                       onChange={() => handleToggle(calendar.id)}
                     />
@@ -87,7 +89,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
         <div className="flex justify-end gap-4 pt-6 mt-auto">
           <button
             onClick={onClose}
-            className={`px-6 py-2 rounded-xl font-semibold transition-colors ${theme.textSecondary} ${theme.hoverBg}`}
+            className={`px-6 py-2 rounded-xl font-semibold transition-colors ${theme.textSecondary} hover:${theme.textPrimary}`}
           >
             キャンセル
           </button>

@@ -33,10 +33,14 @@ const ThemeToggle: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
+        className={`${theme.headerText} p-2 rounded-full transition-all focus:outline-none`}
         aria-label="テーマを切り替える"
         aria-haspopup="true"
         aria-expanded={isOpen}
+        style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
+        onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
+        onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
       >
         <PaletteIcon className="w-6 h-6" />
       </button>
@@ -54,7 +58,7 @@ const ThemeToggle: React.FC = () => {
               <button
                 key={key}
                 onClick={() => handleThemeChange(key)}
-                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${theme.textPrimary} ${theme.hoverBg}`}
+                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${theme.textPrimary} hover:${theme.selectionBg}`}
                 role="menuitem"
               >
                 <div className="flex items-center">

@@ -35,14 +35,6 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
     }
   };
   
-  const iconBgClass = theme.name === 'Default' ? 'bg-orange-200' : theme.accentBg;
-  
-  let iconTextClass = theme.name === 'Default' ? 'text-orange-500' : theme.buttonText;
-  // Special case for themes where accentBg and buttonText have low contrast
-  if (theme.name === 'Marker') {
-    iconTextClass = 'text-white';
-  }
-  
   const lowerError = error?.toLowerCase() ?? '';
   const isOriginError = ['origin', 'redirect_uri', 'redirect_uri_mismatch', 'invalid_request', 'storagerelay'].some(key => lowerError.includes(key));
   const isClientIdError = lowerError.includes('g.co/dev/eerst');
@@ -54,10 +46,10 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         style={{ boxShadow: theme.clayShadow }}
       >
         <div 
-          className={`mx-auto rounded-full w-28 h-28 flex items-center justify-center mb-8 ${iconBgClass}`}
+          className={`mx-auto rounded-full w-28 h-28 flex items-center justify-center mb-8`}
           style={{ boxShadow: theme.clayButtonPressedShadow }}
         >
-          <CalendarIcon className={`w-16 h-16 ${iconTextClass}`} />
+          <CalendarIcon className={`w-16 h-16 ${theme.accentText}`} />
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">Digital Calendar Signage</h1>
         <p className={`text-base sm:text-lg mb-8 ${theme.textSecondary}`}>
@@ -84,36 +76,36 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         
         {error && (
           <div className="mt-8 text-left text-sm">
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg" role="alert">
+            <div className="bg-red-500/10 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg" role="alert">
               <div className="flex">
                 <div className="py-1"><ExclamationIcon /></div>
                 <div className="ml-3 flex-1">
-                  <p className="font-bold text-red-900">Google認証エラー</p>
-                  <p className="text-red-900">サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
-                  <p className="mt-2 font-mono text-xs bg-red-200 text-red-900 p-2 rounded break-words">{error}</p>
+                  <p className="font-bold text-red-700">Google認証エラー</p>
+                  <p className="text-red-800">サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
+                  <p className="mt-2 font-mono text-xs bg-red-500/20 text-red-900 p-2 rounded break-words">{error}</p>
                 </div>
               </div>
             </div>
             
             {(isOriginError || isClientIdError) && (
-              <div className="mt-4 p-4 bg-gray-50 border border-gray-300 rounded-lg text-gray-800">
-                <h4 className="font-bold text-gray-900 text-base">このエラーを解決するには</h4>
+              <div className={`mt-4 p-4 ${theme.cardBg} border border-black/10 rounded-lg text-gray-800`} style={{boxShadow: theme.clayShadow}}>
+                <h4 className={`font-bold text-base ${theme.textPrimary}`}>このエラーを解決するには</h4>
                 <div className="mt-2">
-                  <strong className="block p-2 bg-blue-100 text-blue-900 rounded border border-blue-200">もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
+                  <strong className={`block p-2 rounded border ${theme.accentBg} ${theme.accentText} border-current/20`}>もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <strong className="block text-base text-gray-800">開発者向け情報：</strong>
+                <div className="mt-4 pt-4 border-t border-black/10">
+                  <strong className={`block text-base ${theme.textPrimary}`}>開発者向け情報：</strong>
                   
                   {isOriginError && (
                     <div className="mt-2">
-                      <p className="font-semibold text-gray-700">原因: 承認されていないURL (JavaScript生成元)</p>
-                      <p className="mt-1 text-gray-600">Googleのセキュリティポリシーにより、事前に登録されたURLからのみ認証リクエストが許可されます。現在のURLが登録されていないようです。</p>
-                      <ol className="list-decimal list-inside my-3 space-y-2 text-gray-700">
+                      <p className={`font-semibold ${theme.textSecondary}`}>原因: 承認されていないURL (JavaScript生成元)</p>
+                      <p className={`mt-1 ${theme.textMuted}`}>Googleのセキュリティポリシーにより、事前に登録されたURLからのみ認証リクエストが許可されます。現在のURLが登録されていないようです。</p>
+                      <ol className={`list-decimal list-inside my-3 space-y-2 ${theme.textMuted}`}>
                         <li>
                           <strong>以下のURLをコピーしてください:</strong>
                           <div className="flex items-center mt-1">
-                            <code className="bg-gray-200 text-gray-900 p-2 rounded-l font-mono text-xs break-all flex-grow">{window.location.origin}</code>
+                            <code className="bg-black/5 text-black/80 p-2 rounded-l font-mono text-xs break-all flex-grow">{window.location.origin}</code>
                             <button 
                               onClick={(e) => {
                                   e.preventDefault();
@@ -138,14 +130,14 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
                         <li>プロジェクトの「OAuth 2.0 クライアント ID」を選択します。</li>
                         <li>「承認済みのJavaScript生成元」セクションで「+ URI を追加」をクリックし、コピーしたURLを貼り付けて保存します。</li>
                       </ol>
-                      <p className="text-xs text-gray-500"><strong>注意:</strong> 設定の反映には数分かかることがあります。反映後にページを再読み込みしてください。</p>
+                      <p className={`text-xs ${theme.textMuted}`}><strong>注意:</strong> 設定の反映には数分かかることがあります。反映後にページを再読み込みしてください。</p>
                     </div>
                   )}
 
                   {isClientIdError && (
                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <p className="font-semibold text-gray-700">原因：クライアントIDが無効</p>
-                          <p className="mt-1 text-gray-600">クライアントIDが無効か、削除されているようです。<code>hooks/useGoogleAuth.ts</code> ファイル内の <code>GOOGLE_CLIENT_ID</code> が、Google Cloud Consoleで作成したものと一致しているか確認してください。</p>
+                          <p className={`font-semibold ${theme.textSecondary}`}>原因：クライアントIDが無効</p>
+                          <p className={`mt-1 ${theme.textMuted}`}>クライアントIDが無効か、削除されているようです。<code>hooks/useGoogleAuth.ts</code> ファイル内の <code>GOOGLE_CLIENT_ID</code> が、Google Cloud Consoleで作成したものと一致しているか確認してください。</p>
                       </div>
                   )}
                 </div>

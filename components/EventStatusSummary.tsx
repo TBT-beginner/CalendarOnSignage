@@ -22,10 +22,10 @@ const EventStatusSummary: React.FC<EventStatusSummaryProps> = ({ currentEvents }
     return (
       <div className="relative w-full h-full flex items-center justify-center">
         <div className="flex items-baseline justify-center space-x-4 animate-pulse">
-            <span className={`font-display ${theme.accentText} font-bold text-2xl md:text-4xl hidden sm:inline`}>
+            <span className={`font-display ${theme.accentText} font-bold text-2xl md:text-4xl hidden sm:inline`} style={{ textShadow: `1px 1px 2px ${theme.accentShadow}`}}>
               現在:
             </span>
-            <h2 className={`text-3xl sm:text-4xl md:text-7xl font-bold ${theme.textPrimary} tracking-wider drop-shadow-lg text-center px-4`}>
+            <h2 className={`text-3xl sm:text-4xl md:text-7xl font-bold ${theme.textPrimary} tracking-wider text-center px-4`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
               {currentEvent.summary}
             </h2>
             <span className={`font-display text-2xl md:text-4xl ${theme.textSecondary}`}>
@@ -44,10 +44,10 @@ const EventStatusSummary: React.FC<EventStatusSummaryProps> = ({ currentEvents }
       {/* Duplicate the list for a seamless loop */}
       {[...currentEvents, ...currentEvents].map((event, index) => (
          <div key={index} className="flex items-baseline flex-shrink-0 mx-8">
-            <span className={`font-display ${theme.accentText} font-bold text-2xl md:text-4xl`}>
+            <span className={`font-display ${theme.accentText} font-bold text-2xl md:text-4xl`} style={{ textShadow: `1px 1px 2px ${theme.accentShadow}`}}>
               現在:
             </span>
-            <h2 className={`text-3xl sm:text-4xl md:text-6xl font-bold ${theme.textPrimary} tracking-wider drop-shadow-lg ml-4 whitespace-nowrap`}>
+            <h2 className={`text-3xl sm:text-4xl md:text-6xl font-bold ${theme.textPrimary} tracking-wider ml-4 whitespace-nowrap`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
               {event.summary}
             </h2>
             <span className={`font-display text-2xl md:text-4xl ${theme.textSecondary} ml-4`}>

@@ -4,12 +4,12 @@ export interface Theme {
   name: string;
   bg: string;
   cardBg: string;
-  cardOpacity: string;
   textPrimary: string;
   textSecondary: string;
   textMuted: string;
   accentText: string;
   accentBg: string;
+  accentShadow: string;
   headerText: string;
   headerSubtext: string;
   button: string;
@@ -23,287 +23,181 @@ export interface Theme {
   selectionBg: string;
   bannerBg: string;
   bannerText: string;
+  border: string;
 }
 
-const defaultTheme: Theme = {
-  name: 'Default',
-  bg: 'bg-orange-200',
-  cardBg: 'bg-orange-100',
-  cardOpacity: '',
-  textPrimary: 'text-stone-800',
-  textSecondary: 'text-orange-900',
-  textMuted: 'text-stone-500',
-  accentText: 'text-orange-600',
-  accentBg: 'bg-orange-500',
-  headerText: 'text-stone-900',
-  headerSubtext: 'text-orange-900',
-  button: 'bg-orange-100',
-  buttonText: 'text-orange-800',
-  paginationActive: 'bg-orange-500',
-  paginationInactive: 'bg-orange-300',
-  clayShadow: '10px 10px 20px rgba(194, 126, 50, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(194, 126, 50, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(194, 126, 50, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-orange-500',
-  bannerText: 'text-white',
+const createNeumorphicTheme = (name: string, colors: {
+  bg: string; // e.g., 'bg-slate-100'
+  primary: string; // e.g., 'stone-800'
+  secondary: string; // e.g., 'stone-600'
+  accent: string; // e.g., 'orange-500'
+  shadowDark: string; // e.g., 'rgba(209, 213, 219, 0.8)'
+  shadowLight: string; // e.g., 'rgba(255, 255, 255, 0.8)'
+  buttonShadowDark?: string;
+  buttonShadowLight?: string;
+}): Theme => {
+  const buttonShadowDark = colors.buttonShadowDark || colors.shadowDark;
+  const buttonShadowLight = colors.buttonShadowLight || colors.shadowLight;
+  return {
+    name,
+    bg: colors.bg,
+    cardBg: colors.bg,
+    textPrimary: `text-${colors.primary}`,
+    textSecondary: `text-${colors.secondary}`,
+    textMuted: `text-${colors.secondary}/70`,
+    accentText: `text-${colors.accent}`,
+    accentBg: `bg-${colors.accent}`,
+    accentShadow: `rgba(0,0,0,0.1)`,
+    headerText: `text-${colors.primary}`,
+    headerSubtext: `text-${colors.secondary}`,
+    button: colors.bg,
+    buttonText: `text-${colors.accent}`,
+    paginationActive: `bg-${colors.accent}`,
+    paginationInactive: `${colors.bg} shadow-inner`,
+    clayShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`,
+    clayButtonShadow: `5px 5px 10px ${buttonShadowDark}, -5px -5px 10px ${buttonShadowLight}`,
+    clayButtonPressedShadow: `inset 5px 5px 10px ${buttonShadowDark}, inset -5px -5px 10px ${buttonShadowLight}`,
+    hoverBg: 'opacity-80',
+    selectionBg: `bg-${colors.accent}/10`,
+    bannerBg: colors.bg,
+    bannerText: `text-${colors.accent}`,
+    border: `border-${colors.secondary}/10`,
+  };
 };
+
+const defaultTheme = createNeumorphicTheme('Default', {
+  bg: 'bg-slate-100',
+  primary: 'stone-800',
+  secondary: 'stone-600',
+  accent: 'orange-500',
+  shadowDark: '#c5c9ce',
+  shadowLight: '#ffffff',
+});
 
 const markerTheme: Theme = {
   name: 'Marker',
   bg: 'bg-white',
   cardBg: 'bg-white',
-  cardOpacity: '',
   textPrimary: 'text-black',
   textSecondary: 'text-gray-800',
   textMuted: 'text-gray-500',
-  accentText: 'text-blue-600', // Accent: Blue
+  accentText: 'text-blue-600',
   accentBg: 'bg-blue-600',
+  accentShadow: 'rgba(0,0,0,0.1)',
   headerText: 'text-black',
   headerSubtext: 'text-gray-800',
-  button: 'bg-white', // White button
-  buttonText: 'text-blue-600', // Blue text for buttons
-  paginationActive: 'bg-red-500', // Highlight: Red
-  paginationInactive: 'bg-gray-300',
-  // Use box-shadow for a thick, solid border effect. No blur.
-  clayShadow: '8px 8px 0px #000', 
-  clayButtonShadow: '4px 4px 0px #000',
-  clayButtonPressedShadow: '2px 2px 0px #000', // Simpler pressed state by reducing offset
-  hoverBg: 'hover:bg-red-100', // Use a light red for hover as highlight
-  selectionBg: 'bg-red-200', // Use a light red for selection
-  bannerBg: 'bg-blue-500', // Accent: Blue
-  bannerText: 'text-white',
-};
-
-const springTheme: Theme = {
-  name: 'Spring',
-  bg: 'bg-pink-100',
-  cardBg: 'bg-pink-50',
-  cardOpacity: '',
-  textPrimary: 'text-green-800',
-  textSecondary: 'text-green-600',
-  textMuted: 'text-green-500',
-  accentText: 'text-pink-500',
-  accentBg: 'bg-pink-400',
-  headerText: 'text-green-900',
-  headerSubtext: 'text-pink-700',
-  button: 'bg-pink-50',
-  buttonText: 'text-pink-600',
-  paginationActive: 'bg-pink-400',
-  paginationInactive: 'bg-green-200',
-  clayShadow: '10px 10px 20px rgba(212, 122, 147, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(212, 122, 147, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(212, 122, 147, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-pink-400',
-  bannerText: 'text-white',
-};
-
-const summerTheme: Theme = {
-  name: 'Summer',
-  bg: 'bg-sky-200',
-  cardBg: 'bg-sky-100',
-  cardOpacity: '',
-  textPrimary: 'text-blue-900',
-  textSecondary: 'text-blue-700',
-  textMuted: 'text-blue-500',
-  accentText: 'text-yellow-500',
-  accentBg: 'bg-yellow-400',
-  headerText: 'text-blue-900',
-  headerSubtext: 'text-sky-800',
-  button: 'bg-sky-100',
-  buttonText: 'text-sky-700',
-  paginationActive: 'bg-yellow-400',
-  paginationInactive: 'bg-sky-300',
-  clayShadow: '10px 10px 20px rgba(50, 138, 194, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(50, 138, 194, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(50, 138, 194, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-yellow-400',
-  bannerText: 'text-blue-900',
-};
-
-const autumnTheme: Theme = {
-  name: 'Autumn',
-  bg: 'bg-amber-200',
-  cardBg: 'bg-amber-100',
-  cardOpacity: '',
-  textPrimary: 'text-stone-800',
-  textSecondary: 'text-stone-600',
-  textMuted: 'text-stone-500',
-  accentText: 'text-red-600',
-  accentBg: 'bg-red-500',
-  headerText: 'text-stone-900',
-  headerSubtext: 'text-amber-800',
-  button: 'bg-amber-100',
-  buttonText: 'text-red-700',
+  button: 'bg-white',
+  buttonText: 'text-blue-600',
   paginationActive: 'bg-red-500',
-  paginationInactive: 'bg-amber-300',
-  clayShadow: '10px 10px 20px rgba(194, 142, 50, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(194, 142, 50, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(194, 142, 50, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-red-600',
+  paginationInactive: 'bg-gray-300',
+  clayShadow: '8px 8px 0px #000',
+  clayButtonShadow: '4px 4px 0px #000',
+  clayButtonPressedShadow: '2px 2px 0px #000',
+  hoverBg: 'hover:bg-red-100',
+  selectionBg: 'bg-red-200',
+  bannerBg: 'bg-blue-500',
   bannerText: 'text-white',
+  border: 'border-gray-200',
 };
 
-const winterTheme: Theme = {
-  name: 'Winter',
+const springTheme = createNeumorphicTheme('Spring', {
+  bg: 'bg-emerald-50',
+  primary: 'emerald-900',
+  secondary: 'emerald-700',
+  accent: 'pink-500',
+  shadowDark: '#cde0d7',
+  shadowLight: '#ffffff',
+});
+
+const summerTheme = createNeumorphicTheme('Summer', {
+  bg: 'bg-sky-100',
+  primary: 'sky-900',
+  secondary: 'sky-700',
+  accent: 'yellow-500',
+  shadowDark: '#c3d5e0',
+  shadowLight: '#ffffff',
+});
+
+const autumnTheme = createNeumorphicTheme('Autumn', {
+  bg: 'bg-amber-100',
+  primary: 'stone-800',
+  secondary: 'amber-900',
+  accent: 'red-600',
+  shadowDark: '#dac7a3',
+  shadowLight: '#ffffff',
+});
+
+const winterTheme = createNeumorphicTheme('Winter', {
   bg: 'bg-slate-200',
-  cardBg: 'bg-slate-50',
-  cardOpacity: '',
-  textPrimary: 'text-slate-800',
-  textSecondary: 'text-slate-600',
-  textMuted: 'text-slate-500',
-  accentText: 'text-sky-600',
-  accentBg: 'bg-sky-500',
-  headerText: 'text-slate-900',
-  headerSubtext: 'text-slate-700',
-  button: 'bg-slate-50',
-  buttonText: 'text-sky-700',
-  paginationActive: 'bg-sky-500',
-  paginationInactive: 'bg-slate-400',
-  clayShadow: '10px 10px 20px rgba(136, 150, 164, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(136, 150, 164, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(136, 150, 164, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-sky-500',
-  bannerText: 'text-white',
-};
+  primary: 'slate-800',
+  secondary: 'slate-600',
+  accent: 'sky-600',
+  shadowDark: '#bec5cf',
+  shadowLight: '#ffffff',
+});
 
-const matchaTheme: Theme = {
-  name: 'Matcha',
-  bg: 'bg-emerald-100',
-  cardBg: 'bg-emerald-50',
-  cardOpacity: '',
-  textPrimary: 'text-emerald-900',
-  textSecondary: 'text-amber-800',
-  textMuted: 'text-emerald-700',
-  accentText: 'text-amber-600',
-  accentBg: 'bg-amber-500',
-  headerText: 'text-emerald-900',
-  headerSubtext: 'text-amber-900',
-  button: 'bg-emerald-50',
-  buttonText: 'text-emerald-800',
-  paginationActive: 'bg-amber-500',
-  paginationInactive: 'bg-emerald-300',
-  clayShadow: '10px 10px 20px rgba(67, 138, 114, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(67, 138, 114, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(67, 138, 114, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-emerald-700',
-  bannerText: 'text-white',
-};
+const matchaTheme = createNeumorphicTheme('Matcha', {
+  bg: 'bg-lime-50',
+  primary: 'emerald-900',
+  secondary: 'lime-800',
+  accent: 'amber-700',
+  shadowDark: '#dbe0d2',
+  shadowLight: '#ffffff',
+});
 
-const zenTheme: Theme = {
-  name: 'Zen',
-  bg: 'bg-slate-200',
-  cardBg: 'bg-white',
-  cardOpacity: '',
-  textPrimary: 'text-slate-800',
-  textSecondary: 'text-slate-600',
-  textMuted: 'text-slate-500',
-  accentText: 'text-sky-800',
-  accentBg: 'bg-sky-700',
-  headerText: 'text-slate-900',
-  headerSubtext: 'text-slate-700',
-  button: 'bg-white',
-  buttonText: 'text-sky-800',
-  paginationActive: 'bg-sky-700',
-  paginationInactive: 'bg-slate-400',
-  clayShadow: '10px 10px 20px rgba(136, 150, 164, 0.25), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(136, 150, 164, 0.25)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(136, 150, 164, 0.25)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-slate-800',
-  bannerText: 'text-white',
-};
-
-const halloweenTheme: Theme = {
-  name: 'Halloween',
-  bg: 'bg-slate-800',
-  cardBg: 'bg-slate-700',
-  cardOpacity: '',
-  textPrimary: 'text-orange-400',
-  textSecondary: 'text-purple-400',
-  textMuted: 'text-gray-400',
-  accentText: 'text-lime-400',
-  accentBg: 'bg-purple-600',
-  headerText: 'text-orange-500',
-  headerSubtext: 'text-purple-300',
-  button: 'bg-slate-700',
-  buttonText: 'text-orange-400',
-  paginationActive: 'bg-orange-500',
-  paginationInactive: 'bg-purple-800',
-  clayShadow: '10px 10px 20px rgba(25, 33, 46, 0.5), inset 4px 4px 8px rgba(0,0,0,0.3), inset -4px -4px 8px rgba(90, 103, 125, 0.3)',
-  clayButtonShadow: '5px 5px 10px rgba(25, 33, 46, 0.5)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(25, 33, 46, 0.5)',
-  hoverBg: 'hover:bg-white/10',
-  selectionBg: 'bg-white/10',
-  bannerBg: 'bg-purple-700',
-  bannerText: 'text-orange-300',
-};
+const zenTheme = createNeumorphicTheme('Zen', {
+  bg: 'bg-gray-50',
+  primary: 'gray-800',
+  secondary: 'gray-600',
+  accent: 'indigo-600',
+  shadowDark: '#d1d1d1',
+  shadowLight: '#ffffff',
+});
 
 
-const christmasTheme: Theme = {
-  name: 'Christmas',
-  bg: 'bg-red-700',
-  cardBg: 'bg-red-600',
-  cardOpacity: '',
-  textPrimary: 'text-green-50',
-  textSecondary: 'text-yellow-300',
-  textMuted: 'text-green-100',
-  accentText: 'text-yellow-300',
-  accentBg: 'bg-green-600',
-  headerText: 'text-white',
-  headerSubtext: 'text-red-200',
-  button: 'bg-red-600',
-  buttonText: 'text-yellow-300',
-  paginationActive: 'bg-yellow-400',
-  paginationInactive: 'bg-red-400',
-  clayShadow: '10px 10px 20px rgba(142, 36, 36, 0.5), inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(224, 78, 78, 0.4)',
-  clayButtonShadow: '5px 5px 10px rgba(142, 36, 36, 0.5)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(142, 36, 36, 0.5)',
-  hoverBg: 'hover:bg-white/10',
-  selectionBg: 'bg-white/10',
-  bannerBg: 'bg-green-700',
-  bannerText: 'text-yellow-200',
-};
+const halloweenTheme = createNeumorphicTheme('Halloween', {
+    bg: 'bg-slate-800',
+    primary: 'orange-400',
+    secondary: 'purple-400',
+    accent: 'lime-400',
+    shadowDark: '#1f2937',
+    shadowLight: '#38465c',
+    buttonShadowDark: '#1a232f',
+    buttonShadowLight: '#3e4e68',
+});
+halloweenTheme.bannerBg = 'bg-slate-800';
+halloweenTheme.bannerText = 'text-purple-400';
+halloweenTheme.selectionBg = 'bg-purple-500/10';
+halloweenTheme.textMuted = 'text-gray-400';
+
+const christmasTheme = createNeumorphicTheme('Christmas', {
+    bg: 'bg-red-800',
+    primary: 'green-50',
+    secondary: 'yellow-300',
+    accent: 'yellow-300',
+    shadowDark: '#6b2121',
+    shadowLight: '#c33b3b',
+});
+christmasTheme.bannerBg = 'bg-green-800';
+christmasTheme.bannerText = 'text-yellow-200';
+christmasTheme.selectionBg = 'bg-yellow-300/10';
+christmasTheme.textMuted = 'text-green-100';
 
 
-const newYearTheme: Theme = {
-  name: 'New Year',
-  bg: 'bg-red-100',
-  cardBg: 'bg-white',
-  cardOpacity: '',
-  textPrimary: 'text-black',
-  textSecondary: 'text-gray-800',
-  textMuted: 'text-gray-600',
-  accentText: 'text-yellow-500',
-  accentBg: 'bg-yellow-400',
-  headerText: 'text-red-700',
-  headerSubtext: 'text-red-500',
-  button: 'bg-white',
-  buttonText: 'text-yellow-600',
-  paginationActive: 'bg-yellow-500',
-  paginationInactive: 'bg-red-300',
-  clayShadow: '10px 10px 20px rgba(204, 151, 151, 0.5), inset 4px 4px 8px rgba(0,0,0,0.02), inset -4px -4px 8px rgba(255,255,255,0.8)',
-  clayButtonShadow: '5px 5px 10px rgba(204, 151, 151, 0.5)',
-  clayButtonPressedShadow: 'inset 5px 5px 10px rgba(204, 151, 151, 0.5)',
-  hoverBg: 'hover:bg-black/10',
-  selectionBg: 'bg-black/10',
-  bannerBg: 'bg-red-600',
-  bannerText: 'text-yellow-300',
-};
+const newYearTheme = createNeumorphicTheme('New Year', {
+  bg: 'bg-rose-50',
+  primary: 'red-900',
+  secondary: 'gray-800',
+  accent: 'yellow-500',
+  shadowDark: '#e6d3d5',
+  shadowLight: '#ffffff',
+});
+newYearTheme.bannerBg = 'bg-red-700';
+newYearTheme.bannerText = 'text-yellow-300';
+newYearTheme.selectionBg = 'bg-yellow-500/10';
 
 export const allThemes: Record<string, Theme> = {
+  'Default': defaultTheme,
   'Marker': markerTheme,
   'Spring': springTheme,
   'Summer': summerTheme,
@@ -314,7 +208,6 @@ export const allThemes: Record<string, Theme> = {
   'Halloween': halloweenTheme,
   'Christmas': christmasTheme,
   'New Year': newYearTheme,
-  'Default': defaultTheme,
 };
 
 const AUTO_THEME_KEY = 'auto';

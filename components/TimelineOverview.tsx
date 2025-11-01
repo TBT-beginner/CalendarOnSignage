@@ -46,7 +46,7 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
         className={`${theme.cardBg} rounded-3xl p-4 flex flex-col h-full`}
         style={{ boxShadow: theme.clayShadow }}
       >
-        <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-black/10 pb-2 flex-shrink-0`}>
+        <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b ${theme.border} pb-2 flex-shrink-0`}>
           今日のすべての予定
         </h3>
         <div className="flex-grow flex items-center justify-center">
@@ -72,7 +72,7 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
       className={`${theme.cardBg} rounded-3xl p-4 flex flex-col h-full`}
       style={{ boxShadow: theme.clayShadow }}
     >
-      <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b border-black/10 pb-2 flex-shrink-0`}>
+      <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} mb-2 border-b ${theme.border} pb-2 flex-shrink-0`}>
         今日のすべての予定
       </h3>
       <div className="custom-scrollbar overflow-y-auto flex-grow pr-2">
@@ -104,8 +104,8 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
           {Array.from({ length: totalPages }).map((_, index) => (
             <div
               key={index}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                currentPage === index ? `${theme.paginationActive} w-6` : theme.paginationInactive
+              className={`h-2.5 rounded-full transition-all duration-300 ${
+                currentPage === index ? `${theme.paginationActive} w-6` : `${theme.paginationInactive} w-2.5`
               }`}
             />
           ))}
