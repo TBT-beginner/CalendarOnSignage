@@ -7,10 +7,12 @@ import CalendarIcon from './icons/CalendarIcon';
 import AllDayEventsBanner from './AllDayEventsBanner';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
+import SettingsIcon from './icons/SettingsIcon';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
   onSignOut: () => void;
+  onOpenCalendarSelection: () => void;
 }
 
 const getCurrentTimeHHMM = () => {
@@ -20,7 +22,7 @@ const getCurrentTimeHHMM = () => {
   return `${hours}:${minutes}`;
 };
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection }) => {
   const { theme } = useTheme();
   const [currentTime, setCurrentTime] = useState(getCurrentTimeHHMM());
 
@@ -63,9 +65,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
             <p className={theme.headerSubtext}>Googleカレンダーより</p>
           </div>
         </div>
-        <div className="flex items-start justify-center sm:justify-end gap-4 flex-wrap">
+        <div className="flex items-start justify-center sm:justify-end gap-2 flex-wrap">
           <Clock />
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={onOpenCalendarSelection}
+              className={`${theme.headerText} p-2 rounded-full hover:bg-black/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
+              aria-label="表示カレンダーの選択"
+            >
+              <SettingsIcon className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </header>
       
