@@ -54,7 +54,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onReset }) => {
           </div>
           <div>
             <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText}`}>今日のスケジュール</h1>
-            <p className={theme.headerSubtext}>Geminiが生成</p>
+            <p className={theme.headerSubtext}>Googleカレンダーより</p>
           </div>
         </div>
         <Clock />
@@ -93,7 +93,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onReset }) => {
             onClick={onReset}
             className={`${theme.headerText} opacity-80 hover:opacity-100 transition text-sm font-semibold`}
           >
-            リセットして新しいスケジュールを生成
+            最初の画面に戻る
           </button>
       </footer>
     </div>

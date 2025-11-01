@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CalendarIcon from './icons/CalendarIcon';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface SetupViewProps {
-  onSetupComplete: (calendarId: string) => void;
+  onSetupComplete: () => void;
   isLoading: boolean;
+  error: string | null;
 }
 
-const SetupView: React.FC<SetupViewProps> = ({ onSetupComplete, isLoading }) => {
+const SetupView: React.FC<SetupViewProps> = ({ onSetupComplete, isLoading, error }) => {
   const theme = useTheme();
-  const [calendarId, setCalendarId] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSetupComplete(calendarId || 'gemini-generated-events');
+    if (!isLoading) {
+      onSetupComplete();
+    }
   };
   
   // A bit of logic to make the icon colors match the theme better
@@ -25,7 +27,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSetupComplete, isLoading }) => 
 
   return (
     <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${theme.textPrimary}`}>
-      <div className={`w-full max-w-lg text-center ${theme.cardBg} rounded-2xl shadow-2xl p-8 sm:p-12`}>
+      <div className={`w-full max-w-lg text-center ${theme.cardBg} rounded-2xl shadow-2xl p-8 sm:p-12 transition-all`}>
         <div className={`mx-auto rounded-full p-6 w-28 h-28 flex items-center justify-center mb-8 border-4 ${iconBgClass} ${iconBorderClass} ${opacityClass}`}>
           <CalendarIcon className={`w-16 h-16 ${iconTextClass}`} />
         </div>
@@ -34,28 +36,24 @@ const SetupView: React.FC<SetupViewProps> = ({ onSetupComplete, isLoading }) => 
           見やすい、大きな文字で今日の予定を表示します。
         </p>
         <p className={`text-sm mb-8 ${theme.textMuted}`}>
-          デモのため、Geminiが今日のタスクを自動生成します。下のボタンを押して開始してください。
+          Googleカレンダーの予定を読み込みます。下のボタンを押して開始してください。
         </p>
 
         <form onSubmit={handleSubmit} className="w-full">
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full font-bold py-4 px-6 rounded-lg text-lg sm:text-xl transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${theme.button} ${theme.buttonHover} ${theme.buttonText}`}
+            className={`w-full font-bold py-4 px-6 rounded-lg text-lg sm:text-xl transition-all transform hover:scale-105 ${theme.button} ${theme.buttonHover} ${theme.buttonText} disabled:opacity-75 disabled:cursor-not-allowed disabled:scale-100`}
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                生成中...
-              </div>
-            ) : (
-              'カレンダーを表示'
-            )}
+            {isLoading ? '読み込み中...' : 'カレンダーを表示'}
           </button>
         </form>
+        
+        {error && (
+          <div className="mt-4 text-red-700 bg-red-100 p-4 rounded-lg text-sm">
+            <strong>エラー:</strong> {error}
+          </div>
+        )}
       </div>
     </div>
   );
