@@ -8,7 +8,7 @@ import { useTheme } from '../contexts/ThemeContext';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
-  onReset: () => void;
+  onSignOut: () => void;
 }
 
 const getCurrentTimeHHMM = () => {
@@ -18,7 +18,7 @@ const getCurrentTimeHHMM = () => {
   return `${hours}:${minutes}`;
 };
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onReset }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut }) => {
   const theme = useTheme();
   const [currentTime, setCurrentTime] = useState(getCurrentTimeHHMM());
 
@@ -90,10 +90,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onReset }) => {
 
       <footer className="mt-auto pt-6 text-center">
           <button 
-            onClick={onReset}
+            onClick={onSignOut}
             className={`${theme.headerText} opacity-80 hover:opacity-100 transition text-sm font-semibold`}
           >
-            最初の画面に戻る
+            サインアウト
           </button>
       </footer>
     </div>

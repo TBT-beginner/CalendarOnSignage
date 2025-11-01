@@ -1,50 +1,63 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import SetupView from './components/SetupView';
 import CalendarView from './components/CalendarView';
-import { fetchCalendarEvents } from './services/geminiService';
+import { fetchGoogleCalendarEvents } from './services/googleCalendarService';
 import { CalendarEvent } from './types';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { useGoogleAuth } from './hooks/useGoogleAuth';
 
 function App() {
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const auth = useGoogleAuth();
 
-  const handleSetupComplete = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const fetchedEvents = await fetchCalendarEvents();
-      setEvents(fetchedEvents);
-      setIsSetupComplete(true);
-    } catch (e) {
-      if (e instanceof Error) {
-        setError(e.message);
-      } else {
-        setError('不明なエラーが発生しました。');
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (auth.accessToken) {
+        setIsLoading(true);
+        setFetchError(null);
+        try {
+          const fetchedEvents = await fetchGoogleCalendarEvents(auth.accessToken);
+          setEvents(fetchedEvents);
+        } catch (e) {
+          if (e instanceof Error) {
+            setFetchError(e.message);
+            // If fetch fails due to auth, sign out to force re-authentication
+            if (e.message.includes('認証')) {
+                auth.signOut();
+            }
+          } else {
+            setFetchError('不明なエラーが発生しました。');
+          }
+        } finally {
+          setIsLoading(false);
+        }
       }
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    };
 
-  const handleReset = () => {
-    setIsSetupComplete(false);
+    fetchEvents();
+  }, [auth.accessToken, auth.signOut]);
+
+  const handleSignOut = () => {
+    auth.signOut();
     setEvents([]);
-    setError(null);
-  }
+    setFetchError(null);
+  };
+
+  const combinedError = auth.error || fetchError;
 
   return (
     <ThemeProvider>
-      {!isSetupComplete ? (
+      {!auth.accessToken ? (
         <SetupView
-          onSetupComplete={handleSetupComplete}
+          onSignIn={auth.signIn}
+          isGsiReady={auth.isGsiReady}
+          error={combinedError}
           isLoading={isLoading}
-          error={error}
         />
       ) : (
-        <CalendarView events={events} onReset={handleReset} />
+        <CalendarView events={events} onSignOut={handleSignOut} />
       )}
     </ThemeProvider>
   );
