@@ -82,10 +82,19 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
         </h2>
         
         <div className={`border-y ${theme.border} py-4 my-2`}>
-          <label className="flex items-center justify-between cursor-pointer" onClick={onToggleShowEndTime}>
+           <div
+            className="flex items-center justify-between cursor-pointer"
+            onClick={onToggleShowEndTime}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onToggleShowEndTime(); }}
+            aria-pressed={showEndTime}
+          >
             <span className={`text-base ${theme.textPrimary}`}>予定の終了時刻を表示する</span>
-            <ToggleSwitch checked={showEndTime} onChange={onToggleShowEndTime} />
-          </label>
+            <div className="pointer-events-none">
+              <ToggleSwitch checked={showEndTime} onChange={() => {}} />
+            </div>
+          </div>
         </div>
 
         <h3 className={`text-lg font-bold mt-4 mb-2 ${theme.textPrimary}`}>
