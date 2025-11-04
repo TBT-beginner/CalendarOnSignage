@@ -72,6 +72,21 @@ function App() {
     fetchEvents();
   }, [fetchEvents]);
 
+  // Automatically refresh events every 15 minutes
+  useEffect(() => {
+    if (!auth.accessToken || selectedCalendarIds.length === 0) {
+      return; // Don't start the timer if not logged in or no calendars are selected
+    }
+
+    const intervalId = setInterval(() => {
+      fetchEvents();
+    }, 15 * 60 * 1000); // 15 minutes
+
+    // Clear the interval on cleanup
+    return () => clearInterval(intervalId);
+  }, [auth.accessToken, selectedCalendarIds, fetchEvents]);
+
+
   const handleSignOut = () => {
     auth.signOut();
     setEvents([]);
