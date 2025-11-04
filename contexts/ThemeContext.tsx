@@ -75,14 +75,39 @@ const createNeumorphicTheme = (name: string, colors: {
   };
 };
 
-const defaultTheme = createNeumorphicTheme('Default', {
-  bg: 'bg-slate-100',
-  primary: 'stone-800',
-  secondary: 'stone-600',
-  accent: 'orange-500',
-  shadowDark: '#c5c9ce',
-  shadowLight: '#ffffff',
-});
+const signageTheme: Theme = {
+  name: 'Signage',
+  bg: 'bg-[#FBF9F1]',
+  cardBg: 'bg-[#FEFBF3]',
+  textPrimary: 'text-[#403D39]',
+  textSecondary: 'text-[#6D6A60]',
+  textMuted: 'text-[#A9A499]',
+  accentText: 'text-[#D9534F]',
+  accentBg: 'bg-[#D9534F]',
+  accentShadow: 'none',
+  headerText: 'text-[#403D39]',
+  headerSubtext: 'text-[#6D6A60]',
+  button: 'bg-transparent',
+  buttonText: 'text-[#403D39]',
+  paginationActive: 'bg-[#403D39]',
+  paginationInactive: 'bg-[#EAE7DC]',
+  clayShadow: '0 1px 3px 0 rgba(0,0,0,0.05)',
+  clayButtonShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+  clayButtonPressedShadow: 'inset 0 1px 2px 0 rgba(0,0,0,0.05)',
+  hoverBg: 'hover:bg-[#F5F2E9]',
+  selectionBg: 'bg-[#F5F2E9]',
+  bannerBg: 'bg-[#FEFBF3]',
+  bannerText: 'text-[#403D39]',
+  border: 'border-[#EAE7DC]',
+  cardBorder: 'border border-[#EAE7DC]',
+  buttonBorder: 'border border-[#EAE7DC]',
+  paginationShape: 'rounded-full',
+  checkboxShape: 'rounded-md',
+  fontDisplay: 'font-display',
+};
+
+
+const defaultTheme = signageTheme;
 
 const markerTheme: Theme = {
   name: 'Marker',
@@ -275,7 +300,7 @@ newYearTheme.bannerText = 'text-yellow-300';
 newYearTheme.selectionBg = 'bg-yellow-500/10';
 
 export const allThemes: Record<string, Theme> = {
-  'Default': defaultTheme,
+  'Signage': signageTheme,
   'Marker': markerTheme,
   'Pixel Art': pixelTheme,
   '80s Print': eightiesPrintTheme,

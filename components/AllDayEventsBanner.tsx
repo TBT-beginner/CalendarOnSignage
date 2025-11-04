@@ -14,34 +14,17 @@ const AllDayEventsBanner: React.FC<AllDayEventsBannerProps> = ({ events }) => {
     return null;
   }
 
-  const marqueeDuration = events.length * 10;
-
-  const bannerBg = theme.bannerBg;
-  const bannerText = theme.bannerText;
-
   return (
     <div
-      className={`w-full ${bannerBg} ${bannerText} ${theme.buttonBorder} rounded-2xl p-3 mb-6 overflow-hidden flex items-center`}
-      style={{ boxShadow: theme.clayButtonShadow }}
+      className={`w-full ${theme.bannerBg} ${theme.bannerText} ${theme.cardBorder} rounded-xl p-3 flex items-center flex-wrap gap-x-6 gap-y-1`}
+      style={{ boxShadow: theme.clayShadow }}
     >
-      <div className="flex-shrink-0 mr-4">
-        <InformationIcon className="w-6 h-6" />
-      </div>
-      <div className="flex-grow relative h-6 overflow-hidden">
-        {events.length === 1 ? (
-          <div className="whitespace-nowrap font-bold text-lg">
-            {events[0].summary}
-          </div>
-        ) : (
-          <div className="absolute flex" style={{ animation: `marquee ${marqueeDuration}s linear infinite` }}>
-            {[...events, ...events].map((event, index) => (
-              <span key={index} className="mx-8 whitespace-nowrap font-bold text-lg">
-                {event.summary}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
+      <InformationIcon className="w-5 h-5 flex-shrink-0 mr-2" />
+      {events.map((event, index) => (
+        <span key={index} className="font-semibold text-base whitespace-nowrap">
+          {event.summary}
+        </span>
+      ))}
     </div>
   );
 };

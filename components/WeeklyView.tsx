@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 
 interface WeeklyViewProps {
   events: CalendarEvent[];
+  isLoading: boolean;
 }
 
 const formatDateHeader = (dateString: string): string => {
@@ -12,7 +13,7 @@ const formatDateHeader = (dateString: string): string => {
   return new Intl.DateTimeFormat('ja-JP', options).format(date);
 };
 
-const WeeklyView: React.FC<WeeklyViewProps> = ({ events }) => {
+const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
   const { theme } = useTheme();
 
   const eventsByDate = events.reduce((acc, event) => {
@@ -28,7 +29,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events }) => {
 
   return (
     <div
-      className={`w-full flex-grow flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6 min-h-0`}
+      className={`w-full h-full flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 min-h-0`}
       style={{ boxShadow: theme.clayShadow }}
     >
       <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2 flex-shrink-0`}>
@@ -42,7 +43,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events }) => {
                 <h3 className={`font-bold ${theme.textSecondary} ${theme.fontDisplay} text-lg mb-2`}>
                   {formatDateHeader(date)}
                 </h3>
-                <ul className="space-y-1.5 pl-2 border-l-2 ${theme.border}">
+                <ul className={`space-y-1.5 pl-2 border-l-2 ${theme.border}`}>
                   {eventsByDate[date].map((event, index) => (
                     <li key={`${date}-${index}-${event.summary}`} className={`flex items-start space-x-3 text-sm ${theme.textMuted}`}>
                       <span className="w-16 flex-shrink-0 text-right font-mono text-xs pt-1">
@@ -60,7 +61,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events }) => {
         ) : (
           <div className="flex-grow flex items-center justify-center h-full">
             <p className={`${theme.textMuted} text-lg`}>
-              明日以降の予定はありません。
+              {isLoading ? '予定を読み込み中...' : '明日以降の予定はありません。'}
             </p>
           </div>
         )}

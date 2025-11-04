@@ -61,11 +61,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
 
   const eventStatuses = timedEvents.map(getEventStatus);
   const currentEvents = timedEvents.filter((_, index) => eventStatuses[index] === 'current');
-  const nextUpcomingEvent = timedEvents.find((_, index) => eventStatuses[index] === 'upcoming');
-
+  
   return (
     <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-8 font-sans">
-      <header className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6">
+      <header className={`flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6 pb-4 border-b ${theme.border}`}>
         <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
           <div className="flex items-center gap-4 flex-shrink-0">
             <div 
@@ -121,51 +120,28 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             </div>
         </div>
       ) : (
-        <>
-          <AllDayEventsBanner events={allDayEvents} />
-
-          <div 
-            className={`relative flex-grow ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6 mb-6 h-32 sm:h-48 flex items-center justify-center overflow-hidden`}
-            style={{ boxShadow: theme.clayShadow }}
-          >
-            <EventStatusSummary currentEvents={currentEvents} />
-          </div>
-          
-          <main className="flex-grow flex flex-col lg:flex-row gap-6">
-            <div className="w-full lg:w-1/2">
+        <main className="flex-grow flex flex-col lg:flex-row gap-6">
+          {/* Left column */}
+          <div className="w-full lg:flex-grow flex flex-col gap-6">
+            <AllDayEventsBanner events={allDayEvents} />
+            
+            <div 
+              className={`relative flex-grow ${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 min-h-[12rem] sm:min-h-[14rem] flex items-center justify-center overflow-hidden`}
+              style={{ boxShadow: theme.clayShadow }}
+            >
+              <EventStatusSummary currentEvents={currentEvents} />
+            </div>
+            
+            <div className="flex-grow">
               <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
             </div>
-
-            <div className="w-full lg:w-1/4 flex flex-col">
-              <div 
-                className={`flex flex-col flex-grow ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6`}
-                style={{ boxShadow: theme.clayShadow }}
-              >
-                <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2`}>
-                  次の予定
-                </h2>
-                <div className="flex-grow flex flex-col justify-center">
-                  {nextUpcomingEvent ? (
-                    <div>
-                      <p className={`${theme.fontDisplay} text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
-                      <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
-                    </div>
-                  ) : (
-                    <div className="flex-grow flex items-center justify-center">
-                      <p className={`${theme.textMuted} text-lg sm:text-xl text-center`}>
-                        {isLoading ? '予定を読み込んでいます...' : (todaysEvents.length > 0 ? '今日の予定はすべて終了しました。' : '今日の予定はありません。')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full lg:w-1/4 flex flex-col">
-                <WeeklyView events={weeklyEvents} />
-            </div>
-          </main>
-        </>
+          </div>
+          
+          {/* Right column */}
+          <div className="w-full lg:w-[320px] xl:w-[360px] flex-shrink-0">
+              <WeeklyView events={weeklyEvents} isLoading={isLoading} />
+          </div>
+        </main>
       )}
 
 

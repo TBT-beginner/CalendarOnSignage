@@ -21,11 +21,13 @@ const Clock: React.FC = () => {
     hour12: false,
   };
 
-  const dateOptions: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    const weekday = weekdays[date.getDay()];
+    return `${year}年${month}月${day}日 ${weekday}曜日`;
   };
 
   return (
@@ -34,7 +36,7 @@ const Clock: React.FC = () => {
         {currentTime.toLocaleTimeString('ja-JP', timeOptions)}
       </div>
       <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext}`}>
-        {currentTime.toLocaleDateString('ja-JP', dateOptions)}
+        {formatDate(currentTime)}
       </div>
     </div>
   );

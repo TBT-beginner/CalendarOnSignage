@@ -20,18 +20,21 @@ const EventStatusSummary: React.FC<EventStatusSummaryProps> = ({ currentEvents }
   if (currentEvents.length === 1) {
     const currentEvent = currentEvents[0];
     return (
-      <div className="relative w-full h-full flex items-center justify-center">
-        <div className="flex items-baseline justify-center space-x-4 animate-pulse">
-            <span className={`${theme.fontDisplay} ${theme.accentText} font-bold text-2xl md:text-4xl hidden sm:inline`} style={{ textShadow: `1px 1px 2px ${theme.accentShadow}`}}>
-              現在:
-            </span>
-            <h2 className={`text-3xl sm:text-4xl md:text-7xl font-bold ${theme.textPrimary} tracking-wider text-center px-4`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
-              {currentEvent.summary}
-            </h2>
-            <span className={`${theme.fontDisplay} text-2xl md:text-4xl ${theme.textSecondary}`}>
-              ({currentEvent.startTime} - {currentEvent.endTime})
-            </span>
-          </div>
+      <div className="relative w-full h-full flex items-center justify-center animate-pulse">
+        <div className="flex flex-col sm:flex-row items-baseline justify-center gap-x-4 gap-y-2 flex-wrap px-4">
+          <span className={`${theme.fontDisplay} ${theme.accentText} font-bold text-2xl md:text-4xl`}>
+            現在:
+          </span>
+          <h2 className={`text-3xl sm:text-5xl md:text-7xl font-bold ${theme.textPrimary} tracking-tight text-center leading-tight`}>
+            {currentEvent.summary}
+          </h2>
+          <span className={`${theme.fontDisplay} text-2xl md:text-4xl font-bold ${theme.textPrimary}`}>
+            {currentEvent.startTime}
+          </span>
+          <span className={`${theme.fontDisplay} text-xl md:text-2xl ${theme.textSecondary} self-end`}>
+            ({currentEvent.endTime}まで)
+          </span>
+        </div>
       </div>
     );
   }
