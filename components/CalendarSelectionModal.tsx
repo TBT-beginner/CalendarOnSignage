@@ -8,7 +8,28 @@ interface CalendarSelectionModalProps {
   availableCalendars: CalendarListEntry[];
   selectedIds: string[];
   onSave: (selectedIds: string[]) => void;
+  showEndTime: boolean;
+  onToggleShowEndTime: () => void;
 }
+
+const ToggleSwitch: React.FC<{ checked: boolean; onChange: () => void }> = ({ checked, onChange }) => {
+  const { theme } = useTheme();
+  return (
+    <button
+      type="button"
+      className={`relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none ${checked ? theme.accentBg : 'bg-gray-300 dark:bg-gray-600'}`}
+      role="switch"
+      aria-checked={checked}
+      onClick={onChange}
+    >
+      <span
+        aria-hidden="true"
+        className={`inline-block h-5 w-5 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200 ${checked ? 'translate-x-5' : 'translate-x-0'}`}
+      ></span>
+    </button>
+  );
+};
+
 
 const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
   isOpen,
@@ -16,6 +37,8 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
   availableCalendars,
   selectedIds,
   onSave,
+  showEndTime,
+  onToggleShowEndTime
 }) => {
   const { theme } = useTheme();
   const [localSelectedIds, setLocalSelectedIds] = useState(new Set(selectedIds));
@@ -55,9 +78,21 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className={`text-2xl font-bold mb-4 ${theme.textPrimary} ${theme.fontDisplay}`}>
-          表示するカレンダーを選択
+          設定
         </h2>
-        <div className="flex-grow overflow-y-auto max-h-[60vh] custom-scrollbar pr-2 -mr-2">
+        
+        <div className={`border-y ${theme.border} py-4 my-2`}>
+          <label className="flex items-center justify-between cursor-pointer" onClick={onToggleShowEndTime}>
+            <span className={`text-base ${theme.textPrimary}`}>予定の終了時刻を表示する</span>
+            <ToggleSwitch checked={showEndTime} onChange={onToggleShowEndTime} />
+          </label>
+        </div>
+
+        <h3 className={`text-lg font-bold mt-4 mb-2 ${theme.textPrimary}`}>
+            表示カレンダー
+        </h3>
+
+        <div className="flex-grow overflow-y-auto max-h-[50vh] custom-scrollbar pr-2 -mr-2">
           {availableCalendars.length > 0 ? (
             <ul className="space-y-2">
               {availableCalendars.map((calendar) => (

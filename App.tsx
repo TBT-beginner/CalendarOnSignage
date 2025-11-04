@@ -14,6 +14,7 @@ function App() {
   const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
   const [availableCalendars, setAvailableCalendars] = useState<CalendarListEntry[]>([]);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [showEndTime, setShowEndTime] = useState(true);
   
   const auth = useGoogleAuth();
 
@@ -30,8 +31,14 @@ function App() {
       } else {
         setSelectedCalendarIds([]);
       }
+
+      const savedShowEndTime = localStorage.getItem('showEndTime');
+      if (savedShowEndTime !== null) {
+        setShowEndTime(JSON.parse(savedShowEndTime));
+      }
+
     } catch (error) {
-      console.error("Failed to parse selected calendars from localStorage", error);
+      console.error("Failed to parse settings from localStorage", error);
       setSelectedCalendarIds([]);
     }
   }, []);
@@ -89,6 +96,14 @@ function App() {
     localStorage.setItem('selectedCalendarIds', JSON.stringify(ids));
     setIsCalendarModalOpen(false);
   };
+  
+  const handleToggleShowEndTime = () => {
+    setShowEndTime(prev => {
+      const newValue = !prev;
+      localStorage.setItem('showEndTime', JSON.stringify(newValue));
+      return newValue;
+    });
+  };
 
   const combinedError = auth.error || fetchError;
 
@@ -109,6 +124,7 @@ function App() {
             onOpenCalendarSelection={handleOpenCalendarSelection}
             hasSelectedCalendars={selectedCalendarIds.length > 0}
             isLoading={isLoading}
+            showEndTime={showEndTime}
           />
           <CalendarSelectionModal
             isOpen={isCalendarModalOpen}
@@ -116,6 +132,8 @@ function App() {
             availableCalendars={availableCalendars}
             selectedIds={selectedCalendarIds}
             onSave={handleSaveSelectedCalendars}
+            showEndTime={showEndTime}
+            onToggleShowEndTime={handleToggleShowEndTime}
           />
         </>
       )}

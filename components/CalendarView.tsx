@@ -14,9 +14,10 @@ interface CalendarViewProps {
   onOpenCalendarSelection: () => void;
   hasSelectedCalendars: boolean;
   isLoading: boolean;
+  showEndTime: boolean;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime }) => {
   const { theme } = useTheme();
 
   const today = new Date();
@@ -87,12 +88,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         <main className="flex-grow flex flex-col md:flex-row gap-6 lg:gap-8 min-h-0">
           {/* Left: Today's Schedule */}
           <div className="w-full md:w-3/5 flex flex-col">
-            <TimelineOverview events={todaysEvents} />
+            <TimelineOverview events={todaysEvents} showEndTime={showEndTime} />
           </div>
           
           {/* Right: Weekly Schedule */}
           <div className="w-full md:w-2/5 flex flex-col">
-              <WeeklyView events={weeklyEvents} isLoading={isLoading} />
+              <WeeklyView events={weeklyEvents} isLoading={isLoading} showEndTime={showEndTime} />
           </div>
         </main>
       )}

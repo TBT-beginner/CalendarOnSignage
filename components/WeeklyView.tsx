@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 interface WeeklyViewProps {
   events: CalendarEvent[];
   isLoading: boolean;
+  showEndTime: boolean;
 }
 
 const formatDateHeader = (dateString: string): string => {
@@ -18,7 +19,7 @@ const autoScrollContainerStyle: React.CSSProperties = {
   WebkitMaskImage: 'linear-gradient(transparent, black 10%, black 90%, transparent)',
 };
 
-const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
+const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading, showEndTime }) => {
   const { theme } = useTheme();
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -70,9 +71,14 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
                 <span className="w-14 flex-shrink-0 text-right font-mono text-sm pt-0.5 text-gray-500">
                   {event.isAllDay ? '終日' : `${event.startTime}`}
                 </span>
-                <span className={`flex-grow ${theme.textPrimary} text-base`}>
-                  {event.summary}
-                </span>
+                <div className={`flex-grow flex items-baseline`}>
+                  <span className={`${theme.textPrimary} text-base`}>
+                    {event.summary}
+                  </span>
+                  {showEndTime && !event.isAllDay && event.endTime && (
+                    <span className={`ml-2 text-sm ${theme.textMuted}`}>〜{event.endTime}</span>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
