@@ -84,9 +84,8 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
   return (
     <div
       className={`w-full h-full flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 min-h-0`}
-      style={{ boxShadow: theme.clayShadow }}
     >
-      <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-3 flex-shrink-0`}>
+      <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b-2 ${theme.border} pb-3 flex-shrink-0`}>
         今週の予定
       </h2>
       <div ref={containerRef} className="flex-grow overflow-hidden relative" style={autoScrollContainerStyle}>

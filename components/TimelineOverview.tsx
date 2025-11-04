@@ -25,9 +25,8 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events }) => {
     return (
       <div 
         className={`${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 flex flex-col h-full`}
-        style={{ boxShadow: theme.clayShadow }}
       >
-        <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-3 flex-shrink-0`}>
+        <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b-2 ${theme.border} pb-3 flex-shrink-0`}>
           今日一日の予定
         </h3>
         <div className="flex-grow flex items-center justify-center">
@@ -45,9 +44,8 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events }) => {
   return (
     <div 
       className={`${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 flex flex-col h-full`}
-      style={{ boxShadow: theme.clayShadow }}
     >
-      <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-3 flex-shrink-0`}>
+      <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b-2 ${theme.border} pb-3 flex-shrink-0`}>
         今日一日の予定
       </h3>
       <div className="flex-grow">

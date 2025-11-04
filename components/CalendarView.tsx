@@ -37,13 +37,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   const weeklyEvents = events.filter(e => e.date > todayString);
   
   return (
-    <div className="flex flex-col h-screen p-4 sm:p-6 md:p-8 font-sans">
-      <header className={`flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6 pb-4 border-b ${theme.border} flex-shrink-0`}>
+    <div className={`flex flex-col h-screen p-4 sm:p-6 md:p-8 ${theme.fontDisplay}`}>
+      <header className={`flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6 pb-4 ${theme.headerBorder} flex-shrink-0`}>
         <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
           <div className="flex items-center gap-4 flex-shrink-0">
             <div 
               className={`rounded-2xl p-3 ${theme.buttonBorder}`}
-              style={{ boxShadow: theme.clayButtonShadow }}
              >
               <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
             </div>
@@ -56,12 +55,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             <ThemeToggle />
             <button
               onClick={onOpenCalendarSelection}
-              className={`${theme.headerText} p-2 rounded-full ${theme.hoverBg} transition-all focus:outline-none ${theme.buttonBorder}`}
+              className={`p-2 rounded-full transition-all focus:outline-none ${theme.buttonBorder} ${theme.hoverBg}`}
               aria-label="表示カレンダーの選択"
-              style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
-              onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
-              onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
-              onMouseLeave={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
             >
               <SettingsIcon className="w-6 h-6" />
             </button>
@@ -74,7 +69,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         <div className="flex-grow flex items-center justify-center">
             <div 
               className={`text-center ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-8 max-w-lg`}
-              style={{ boxShadow: theme.clayShadow }}
             >
                 <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4`}>カレンダーが選択されていません</h2>
                 <p className={`${theme.textSecondary} mb-6`}>
@@ -82,11 +76,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
                 </p>
                 <button
                     onClick={onOpenCalendarSelection}
-                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonBorder}`}
-                    style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
-                    onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
-                    onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
-                    onMouseLeave={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonHover}`}
                 >
                     <SettingsIcon className="w-5 h-5 mr-2" />
                     カレンダーを選択

@@ -52,7 +52,6 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
     >
       <div
         className={`${theme.cardBg} ${theme.cardBorder} w-full max-w-md rounded-3xl p-6 m-4 flex flex-col`}
-        style={{ boxShadow: theme.clayShadow }}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className={`text-2xl font-bold mb-4 ${theme.textPrimary} ${theme.fontDisplay}`}>
@@ -63,7 +62,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
             <ul className="space-y-2">
               {availableCalendars.map((calendar) => (
                 <li key={calendar.id}>
-                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors hover:${theme.selectionBg} ${localSelectedIds.has(calendar.id) ? theme.selectionBg : ''}`}>
+                  <label className={`flex items-center p-3 rounded-xl cursor-pointer transition-colors ${theme.hoverBg} ${localSelectedIds.has(calendar.id) ? theme.selectionBg : ''}`}>
                     <input
                       type="checkbox"
                       className={`h-5 w-5 border-2 ${theme.checkboxShape} ${theme.border} ${theme.accentBg} focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-current`}
@@ -95,11 +94,7 @@ const CalendarSelectionModal: React.FC<CalendarSelectionModalProps> = ({
           </button>
           <button
             onClick={handleSave}
-            className={`px-6 py-2 rounded-xl font-semibold transition-all ${theme.button} ${theme.buttonText} ${theme.buttonBorder}`}
-            style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out' }}
-            onMouseDown={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
-            onMouseUp={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
-            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+            className={`px-6 py-2 rounded-xl font-semibold transition-all ${theme.button} ${theme.buttonText} ${theme.buttonHover}`}
           >
             保存
           </button>

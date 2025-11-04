@@ -1,5 +1,7 @@
 import React from 'react';
 
+// This component is no longer used in the main UI after switching to a simple light/dark toggle,
+// but is kept for potential future use or to avoid breaking imports if referenced elsewhere.
 const PaletteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 

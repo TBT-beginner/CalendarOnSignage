@@ -18,7 +18,6 @@ const GoogleIcon = () => (
   </svg>
 );
 
-// FIX: Update ExclamationIcon to accept props, allowing className to be passed for theming.
 const ExclamationIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ className, ...rest }) => (
   <svg 
     className={`h-6 w-6 flex-shrink-0 ${className ?? ''}`} 
@@ -51,15 +50,13 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
     <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${theme.textPrimary}`}>
       <div 
         className={`w-full max-w-lg text-center ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-8 sm:p-12 transition-all`}
-        style={{ boxShadow: theme.clayShadow }}
       >
         <div 
           className={`mx-auto rounded-full w-28 h-28 flex items-center justify-center mb-8 ${theme.buttonBorder}`}
-          style={{ boxShadow: theme.clayButtonPressedShadow }}
         >
           <CalendarIcon className={`w-16 h-16 ${theme.accentText}`} />
         </div>
-        <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-2 ${theme.fontDisplay}`}>{theme.name === 'Pixel Art' ? 'Digital Cal-Signage' : 'Digital Calendar Signage'}</h1>
+        <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-2 ${theme.fontDisplay}`}>Digital Calendar Signage</h1>
         <p className={`text-base sm:text-lg mb-8 ${theme.textSecondary}`}>
           見やすい、大きな文字で今日の予定を表示します。
         </p>
@@ -67,15 +64,11 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
           Googleアカウントでサインインして、カレンダーへのアクセスを許可してください。
         </p>
 
-        <form onSubmit={handleSignIn} className="w-full">
+        <form onSubmit={handleSignIn}>
           <button
             type="submit"
             disabled={!isGsiReady}
-            className={`w-full font-bold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.button} ${theme.buttonText} ${theme.buttonBorder} disabled:opacity-75 disabled:cursor-not-allowed`}
-            style={{ boxShadow: theme.clayButtonShadow, transition: 'box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out' }}
-            onMouseDown={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonPressedShadow)}
-            onMouseUp={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
-            onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.boxShadow = theme.clayButtonShadow)}
+            className={`w-full font-bold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.button} ${theme.buttonText} ${theme.buttonHover} disabled:opacity-75 disabled:cursor-not-allowed`}
           >
             <GoogleIcon />
             {isGsiReady ? 'Googleでサインイン' : '準備中...'}
@@ -84,24 +77,24 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         
         {error && (
           <div className="mt-8 text-left text-sm">
-             <div className={`p-4 rounded-lg ${theme.name === 'Pixel Art' ? 'bg-fuchsia-400/10 border-l-4 border-fuchsia-400' : 'bg-red-500/10 border-l-4 border-red-500'}`} role="alert">
+             <div className={`p-4 rounded-lg bg-red-500/10 border-l-4 border-red-500`} role="alert">
               <div className="flex">
                 <div className="py-1">
-                  <ExclamationIcon className={theme.name === 'Pixel Art' ? 'text-fuchsia-400' : 'text-red-500'} />
+                  <ExclamationIcon className={'text-red-500'} />
                 </div>
-                <div className={`ml-3 flex-1 ${theme.name === 'Pixel Art' ? 'text-fuchsia-200' : 'text-red-800'}`}>
-                  <p className={`font-bold ${theme.name === 'Pixel Art' ? 'text-fuchsia-100' : 'text-red-700'}`}>Google認証エラー</p>
+                <div className={`ml-3 flex-1 text-red-800`}>
+                  <p className={`font-bold text-red-700`}>Google認証エラー</p>
                   <p>サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
-                  <p className={`mt-2 font-mono text-xs p-2 rounded break-words ${theme.name === 'Pixel Art' ? 'bg-fuchsia-500/20 text-fuchsia-100' : 'bg-red-500/20 text-red-900'}`}>{error}</p>
+                  <p className={`mt-2 font-mono text-xs p-2 rounded break-words bg-red-500/20 text-red-900`}>{error}</p>
                 </div>
               </div>
             </div>
             
             {(isOriginError || isClientIdError) && (
-              <div className={`mt-4 p-4 ${theme.cardBg} ${theme.cardBorder} rounded-lg`} style={{boxShadow: theme.clayShadow}}>
+              <div className={`mt-4 p-4 ${theme.cardBg} ${theme.cardBorder} rounded-lg`}>
                 <h4 className={`font-bold text-base ${theme.textPrimary}`}>このエラーを解決するには</h4>
                 <div className="mt-2">
-                  <strong className={`block p-2 rounded ${theme.accentBg} ${theme.accentText} ${theme.name === 'Pixel Art' ? 'text-black' : ''} border-current/20`}>もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
+                  <strong className={`block p-2 rounded ${theme.accentBg} text-white`}>もしあなたが開発者でない場合は、この画面全体のスクリーンショットを撮り、アプリケーションの管理者または開発担当者にお送りください。</strong>
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-black/10">

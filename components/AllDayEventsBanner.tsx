@@ -16,8 +16,7 @@ const AllDayEventsBanner: React.FC<AllDayEventsBannerProps> = ({ events }) => {
 
   return (
     <div
-      className={`w-full ${theme.bannerBg} ${theme.bannerText} ${theme.cardBorder} rounded-xl p-3 flex items-center flex-wrap gap-x-6 gap-y-1`}
-      style={{ boxShadow: theme.clayShadow }}
+      className={`w-full ${theme.accentBg} text-white p-3 flex items-center flex-wrap gap-x-6 gap-y-1 rounded-xl`}
     >
       <InformationIcon className="w-5 h-5 flex-shrink-0 mr-2" />
       {events.map((event, index) => (
