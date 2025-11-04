@@ -91,9 +91,9 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
       </h2>
       <div ref={containerRef} className="flex-grow overflow-hidden relative" style={autoScrollContainerStyle}>
         {sortedDates.length > 0 ? (
-          <div 
-            className={shouldAnimate ? 'animate-scroll-vertical absolute top-0 left-0 w-full' : ''}
-            style={shouldAnimate ? { animationDuration } : {}}
+          <div
+            className={shouldAnimate ? 'absolute top-0 left-0 w-full' : ''}
+            style={shouldAnimate ? { animation: `scroll-vertical ${animationDuration} linear infinite` } : {}}
           >
             <div ref={contentRef} className="pb-8">
               {renderEventList()}
