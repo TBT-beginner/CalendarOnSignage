@@ -132,19 +132,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           </div>
           
           <main className="flex-grow flex flex-col lg:flex-row gap-6">
-            <div className="w-full lg:w-2/3">
+            <div className="w-full lg:w-1/2">
               <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
             </div>
 
-            <div className="w-full lg:w-1/3 flex flex-col gap-6">
+            <div className="w-full lg:w-1/4 flex flex-col">
               <div 
-                className={`flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6`}
+                className={`flex flex-col flex-grow ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6`}
                 style={{ boxShadow: theme.clayShadow }}
               >
                 <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2`}>
                   次の予定
                 </h2>
-                <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
+                <div className="flex-grow flex flex-col justify-center">
                   {nextUpcomingEvent ? (
                     <div>
                       <p className={`${theme.fontDisplay} text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
@@ -152,14 +152,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
                     </div>
                   ) : (
                     <div className="flex-grow flex items-center justify-center">
-                      <p className={`${theme.textMuted} text-lg sm:text-xl`}>
+                      <p className={`${theme.textMuted} text-lg sm:text-xl text-center`}>
                         {isLoading ? '予定を読み込んでいます...' : (todaysEvents.length > 0 ? '今日の予定はすべて終了しました。' : '今日の予定はありません。')}
                       </p>
                     </div>
                   )}
                 </div>
               </div>
-              <WeeklyView events={weeklyEvents} />
+            </div>
+
+            <div className="w-full lg:w-1/4 flex flex-col">
+                <WeeklyView events={weeklyEvents} />
             </div>
           </main>
         </>
