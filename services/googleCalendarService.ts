@@ -32,15 +32,21 @@ export const fetchCalendarList = async (accessToken: string): Promise<CalendarLi
 
 /**
  * Formats an ISO datetime string (e.g., "2024-07-27T10:00:00+09:00") or a date string ("2024-07-27")
- * into HH:MM format.
+ * into HH:MM format based on the browser's local timezone.
  * @param dateTime The event start or end object from Google Calendar API.
  * @param isEnd For all-day events, specifies if it's the end time.
  * @returns Time string "HH:MM".
  */
 const formatApiTime = (dateTime: { dateTime?: string; date?: string }, isEnd: boolean = false): string => {
   if (dateTime.dateTime) {
-    // Extracts HH:MM from "YYYY-MM-DDTHH:MM:SS..."
-    return dateTime.dateTime.substring(11, 16);
+    // Create a Date object from the ISO string.
+    // This will automatically parse the string and adjust to the browser's local timezone.
+    const date = new Date(dateTime.dateTime);
+    
+    // Format the time into HH:MM using local timezone.
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
   if (dateTime.date) {
     // All-day event
@@ -105,13 +111,24 @@ export const fetchGoogleCalendarEvents = async (accessToken: string, calendarIds
   results.forEach(data => {
     if (data && data.items) {
       const events: CalendarEvent[] = data.items.map((item: any) => {
-        const eventDate = item.start.dateTime ? item.start.dateTime.substring(0, 10) : item.start.date;
+        let eventDateStr: string;
+        if (item.start.dateTime) {
+          // Use new Date() to get the date in the browser's local timezone
+          const localDate = new Date(item.start.dateTime);
+          const year = localDate.getFullYear();
+          const month = String(localDate.getMonth() + 1).padStart(2, '0');
+          const day = String(localDate.getDate()).padStart(2, '0');
+          eventDateStr = `${year}-${month}-${day}`;
+        } else { // All-day event date is already in YYYY-MM-DD format and timezone-agnostic
+          eventDateStr = item.start.date;
+        }
+        
         return {
           summary: item.summary || '（タイトルなし）',
           startTime: formatApiTime(item.start),
           endTime: formatApiTime(item.end, true),
           isAllDay: !!item.start.date, // If 'date' property exists, it's an all-day event
-          date: eventDate,
+          date: eventDateStr,
         };
       });
       allEvents.push(...events);
