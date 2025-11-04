@@ -20,62 +20,61 @@ export interface Theme {
   buttonBorder: string;
   checkboxShape: string;
   fontDisplay: string;
-  // Fix: Add missing theme properties to resolve type errors in multiple components.
   headerText: string;
   headerSubtext: string;
   accentShadow: string;
 }
 
+// "目に優しい" ライトテーマ
 const lightTheme: Theme = {
   name: 'Light',
-  bg: 'bg-white',
-  cardBg: 'bg-white',
-  textPrimary: 'text-black',
+  bg: 'bg-gray-50', // 白からオフホワイトへ
+  cardBg: 'bg-white', // カードは白のまま
+  textPrimary: 'text-gray-800', // 黒からダークグレーへ
   textSecondary: 'text-gray-600',
   textMuted: 'text-gray-400',
-  accentText: 'text-blue-600',
-  accentBg: 'bg-blue-600',
-  button: 'bg-black',
+  accentText: 'text-indigo-600', // 落ち着いたインディゴへ
+  accentBg: 'bg-indigo-600',
+  button: 'bg-gray-900', // 真っ黒から少し柔らかく
   buttonText: 'text-white',
-  buttonHover: 'hover:bg-gray-800',
+  buttonHover: 'hover:bg-gray-700',
   hoverBg: 'hover:bg-gray-100',
-  selectionBg: 'bg-blue-100',
-  border: 'border-gray-200',
-  headerBorder: 'border-b-2 border-black',
-  cardBorder: 'border-2 border-black',
-  buttonBorder: 'border-2 border-black',
+  selectionBg: 'bg-indigo-100',
+  border: 'border-gray-300', // ボーダーの色を柔らかく
+  headerBorder: 'border-b-2 border-gray-300', // ヘッダーボーダーも同様
+  cardBorder: 'border-2 border-gray-200',
+  buttonBorder: 'border-2 border-gray-900',
   checkboxShape: 'rounded-sm',
   fontDisplay: 'font-display',
-  // Fix: Define values for the new theme properties.
-  headerText: 'text-black',
+  headerText: 'text-gray-900', // テキストも真っ黒を避ける
   headerSubtext: 'text-gray-600',
-  accentShadow: 'rgba(0, 0, 0, 0.2)',
+  accentShadow: 'rgba(79, 70, 229, 0.2)', // インディゴに合わせた影
 };
 
+// "目に優しい" ダークテーマ
 const darkTheme: Theme = {
   name: 'Dark',
-  bg: 'bg-black',
-  cardBg: 'bg-black',
-  textPrimary: 'text-white',
+  bg: 'bg-gray-900', // 黒からダークグレーへ
+  cardBg: 'bg-gray-950', // 背景より少し暗いカード
+  textPrimary: 'text-gray-100', // 白からオフホワイトへ
   textSecondary: 'text-gray-400',
-  textMuted: 'text-gray-600',
-  accentText: 'text-blue-400',
-  accentBg: 'bg-blue-400',
+  textMuted: 'text-gray-500',
+  accentText: 'text-indigo-400', // 落ち着いたインディゴへ
+  accentBg: 'bg-indigo-500',
   button: 'bg-white',
   buttonText: 'text-black',
   buttonHover: 'hover:bg-gray-200',
-  hoverBg: 'hover:bg-gray-900',
-  selectionBg: 'bg-blue-500/20',
-  border: 'border-gray-800',
-  headerBorder: 'border-b-2 border-white',
-  cardBorder: 'border-2 border-white',
+  hoverBg: 'hover:bg-gray-800',
+  selectionBg: 'bg-indigo-500/20',
+  border: 'border-gray-700', // ボーダーの色を柔らかく
+  headerBorder: 'border-b-2 border-gray-700',
+  cardBorder: 'border-2 border-gray-800',
   buttonBorder: 'border-2 border-white',
   checkboxShape: 'rounded-sm',
   fontDisplay: 'font-display',
-  // Fix: Define values for the new theme properties.
   headerText: 'text-white',
   headerSubtext: 'text-gray-400',
-  accentShadow: 'rgba(0, 0, 0, 0.3)',
+  accentShadow: 'rgba(129, 140, 248, 0.2)', // インディゴに合わせた影
 };
 
 
