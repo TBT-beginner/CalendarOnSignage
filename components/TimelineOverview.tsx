@@ -37,7 +37,7 @@ const TimelineOverviewItem: React.FC<{ event: CalendarEvent, showEndTime: boolea
       containerClasses.push(theme.accentBg, 'text-white', 'px-3', '-mx-3', 'shadow-lg');
     }
 
-    const timeClasses = `${theme.fontDisplay} w-24 flex-shrink-0 text-right text-xl ${isCurrent ? 'text-white' : theme.textPrimary}`;
+    const timeClasses = `${theme.fontDisplay} w-24 flex-shrink-0 text-left text-xl ${isCurrent ? 'text-white' : theme.textPrimary}`;
     const summaryClasses = `flex-grow text-xl tracking-tight font-medium ${isCurrent ? 'text-white' : theme.textPrimary}`;
     const endTimeClasses = `ml-2 text-base ${isCurrent ? 'text-white/70' : theme.textMuted}`;
 

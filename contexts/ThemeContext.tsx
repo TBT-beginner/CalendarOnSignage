@@ -12,6 +12,7 @@ export interface Theme {
   button: string;
   buttonText: string;
   buttonHover: string;
+  iconButton: string;
   hoverBg: string;
   selectionBg: string;
   border: string;
@@ -29,7 +30,7 @@ export interface Theme {
 const lightTheme: Theme = {
   name: 'Light',
   bg: 'bg-gray-50', // 白からオフホワイトへ
-  cardBg: 'bg-white', // カードは白のまま
+  cardBg: 'bg-gray-50', // カードも背景と統一
   textPrimary: 'text-gray-800', // 黒からダークグレーへ
   textSecondary: 'text-gray-600',
   textMuted: 'text-gray-400',
@@ -38,11 +39,12 @@ const lightTheme: Theme = {
   button: 'bg-gray-900', // 真っ黒から少し柔らかく
   buttonText: 'text-white',
   buttonHover: 'hover:bg-gray-700',
+  iconButton: 'bg-white border-gray-300 border hover:bg-gray-100',
   hoverBg: 'hover:bg-gray-100',
   selectionBg: 'bg-indigo-100',
   border: 'border-gray-300', // ボーダーの色を柔らかく
   headerBorder: 'border-b-2 border-gray-300', // ヘッダーボーダーも同様
-  cardBorder: 'border-2 border-gray-200',
+  cardBorder: 'border border-gray-300', // 枠線を調整
   buttonBorder: 'border-2 border-gray-900',
   checkboxShape: 'rounded-sm',
   fontDisplay: 'font-display',
@@ -55,7 +57,7 @@ const lightTheme: Theme = {
 const darkTheme: Theme = {
   name: 'Dark',
   bg: 'bg-gray-900', // 黒からダークグレーへ
-  cardBg: 'bg-gray-950', // 背景より少し暗いカード
+  cardBg: 'bg-gray-900', // カードも背景と統一
   textPrimary: 'text-gray-100', // 白からオフホワイトへ
   textSecondary: 'text-gray-400',
   textMuted: 'text-gray-500',
@@ -64,11 +66,12 @@ const darkTheme: Theme = {
   button: 'bg-white',
   buttonText: 'text-black',
   buttonHover: 'hover:bg-gray-200',
+  iconButton: 'bg-gray-800 border-gray-700 border hover:bg-gray-700',
   hoverBg: 'hover:bg-gray-800',
   selectionBg: 'bg-indigo-500/20',
   border: 'border-gray-700', // ボーダーの色を柔らかく
   headerBorder: 'border-b-2 border-gray-700',
-  cardBorder: 'border-2 border-gray-800',
+  cardBorder: 'border border-gray-700', // 枠線を調整
   buttonBorder: 'border-2 border-white',
   checkboxShape: 'rounded-sm',
   fontDisplay: 'font-display',

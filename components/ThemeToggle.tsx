@@ -9,7 +9,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className={`p-2 rounded-full transition-colors focus:outline-none ${theme.buttonBorder} ${theme.hoverBg}`}
+      className={`p-2 rounded-full transition-colors focus:outline-none ${theme.iconButton}`}
       aria-label="テーマを切り替える"
     >
       {theme.name === 'Light' ? (

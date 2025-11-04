@@ -56,7 +56,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             <ThemeToggle />
             <button
               onClick={onOpenCalendarSelection}
-              className={`p-2 rounded-full transition-all focus:outline-none ${theme.buttonBorder} ${theme.hoverBg}`}
+              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton}`}
               aria-label="表示カレンダーの選択"
             >
               <SettingsIcon className="w-6 h-6" />
