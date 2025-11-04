@@ -1,54 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { CalendarEvent } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface TimelineOverviewProps {
   events: CalendarEvent[];
-  eventStatuses: ('past' | 'current' | 'upcoming')[];
 }
 
-const ITEMS_PER_PAGE = 10;
-
-const TimelineOverviewItem: React.FC<{ event: CalendarEvent, status: 'past' | 'current' | 'upcoming' }> = ({ event, status }) => {
+const TimelineOverviewItem: React.FC<{ event: CalendarEvent }> = ({ event }) => {
     const { theme } = useTheme();
-
-    const isCurrent = status === 'current';
-    const isPast = status === 'past';
-
-    const timeClasses = `${theme.fontDisplay} w-20 sm:w-24 flex-shrink-0 text-right text-base sm:text-lg ${isCurrent ? theme.accentText : (isPast ? `${theme.textMuted} opacity-70` : theme.textPrimary)}`;
-    const summaryClasses = `flex-grow text-base sm:text-lg tracking-tight ${isCurrent ? 'font-bold' : ''} ${isPast ? `${theme.textMuted} opacity-70` : theme.textPrimary}`;
+    const timeText = event.isAllDay ? '終日' : event.startTime;
 
     return (
-        <div className={`flex items-start space-x-4 py-2 transition-colors duration-500`}>
-            <p className={timeClasses}>{event.startTime}</p>
-            <p className={summaryClasses}>{event.summary}</p>
+        <div className={`flex items-start space-x-4 py-2`}>
+            <p className={`${theme.fontDisplay} w-24 flex-shrink-0 text-right text-xl ${theme.textPrimary}`}>{timeText}</p>
+            <p className={`flex-grow text-xl tracking-tight font-medium ${theme.textPrimary}`}>{event.summary}</p>
         </div>
     );
 };
 
-const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatuses }) => {
+const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events }) => {
   const { theme } = useTheme();
-  const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Math.ceil(events.length / ITEMS_PER_PAGE);
-
-  useEffect(() => {
-    if (totalPages <= 1) return;
-
-    const timer = setInterval(() => {
-      setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
-    }, 10000); // Change page every 10 seconds
-
-    return () => clearInterval(timer);
-  }, [totalPages]);
   
   if (events.length === 0) {
     return (
       <div 
-        className={`${theme.cardBg} ${theme.cardBorder} rounded-2xl p-4 flex flex-col h-full`}
+        className={`${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 flex flex-col h-full`}
         style={{ boxShadow: theme.clayShadow }}
       >
-        <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-2 border-b ${theme.border} pb-2 flex-shrink-0`}>
-          今日のすべての予定
+        <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-3 flex-shrink-0`}>
+          今日一日の予定
         </h3>
         <div className="flex-grow flex items-center justify-center">
           <p className={`${theme.textMuted} text-lg`}>今日の予定はありません。</p>
@@ -57,61 +37,39 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, eventStatus
     );
   }
 
-  const startIndex = currentPage * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedEvents = events.slice(startIndex, endIndex);
-  const paginatedStatuses = eventStatuses.slice(startIndex, endIndex);
-
-  const midPoint = Math.ceil(paginatedEvents.length / 2);
-  const leftColumnEvents = paginatedEvents.slice(0, midPoint);
-  const leftColumnStatuses = paginatedStatuses.slice(0, midPoint);
-  const rightColumnEvents = paginatedEvents.slice(midPoint);
-  const rightColumnStatuses = paginatedStatuses.slice(midPoint);
+  // Split events into two columns to save vertical space and avoid scrolling
+  const midPoint = Math.ceil(events.length / 2);
+  const leftColumnEvents = events.slice(0, midPoint);
+  const rightColumnEvents = events.slice(midPoint);
 
   return (
     <div 
       className={`${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 flex flex-col h-full`}
       style={{ boxShadow: theme.clayShadow }}
     >
-      <h3 className={`text-lg sm:text-xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-2 border-b ${theme.border} pb-2 flex-shrink-0`}>
-        今日のすべての予定
+      <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-3 flex-shrink-0`}>
+        今日一日の予定
       </h3>
-      <div className="custom-scrollbar overflow-y-auto flex-grow pr-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {/* Left Column */}
+      <div className="flex-grow">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
             <div>
               {leftColumnEvents.map((event, index) => (
                 <TimelineOverviewItem
-                  key={`overview-left-${event.summary}-${startIndex + index}`}
+                  key={`overview-left-${index}-${event.summary}`}
                   event={event}
-                  status={leftColumnStatuses[index]}
                 />
               ))}
             </div>
-            {/* Right Column */}
             <div>
               {rightColumnEvents.map((event, index) => (
                 <TimelineOverviewItem
-                  key={`overview-right-${event.summary}-${startIndex + midPoint + index}`}
+                  key={`overview-right-${index}-${event.summary}`}
                   event={event}
-                  status={rightColumnStatuses[index]}
                 />
               ))}
             </div>
         </div>
       </div>
-      {totalPages > 1 && (
-        <div className="flex justify-center space-x-2 pt-4 flex-shrink-0">
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <div
-              key={index}
-              className={`h-2.5 transition-all duration-300 ${theme.paginationShape} ${
-                currentPage === index ? `${theme.paginationActive} w-6` : `${theme.paginationInactive} w-2.5`
-              }`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 };

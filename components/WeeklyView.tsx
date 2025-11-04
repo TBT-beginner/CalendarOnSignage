@@ -32,10 +32,10 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
       className={`w-full h-full flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-2xl p-6 min-h-0`}
       style={{ boxShadow: theme.clayShadow }}
     >
-      <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2 flex-shrink-0`}>
+      <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-3 flex-shrink-0`}>
         今週の予定
       </h2>
-      <div className="flex-grow custom-scrollbar overflow-y-auto pr-2 -mr-2">
+      <div className="flex-grow">
         {sortedDates.length > 0 ? (
           <div className="space-y-4">
             {sortedDates.map(date => (
@@ -45,11 +45,11 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading }) => {
                 </h3>
                 <ul className={`space-y-1.5 pl-2 border-l-2 ${theme.border}`}>
                   {eventsByDate[date].map((event, index) => (
-                    <li key={`${date}-${index}-${event.summary}`} className={`flex items-start space-x-3 text-sm ${theme.textMuted}`}>
-                      <span className="w-16 flex-shrink-0 text-right font-mono text-xs pt-1">
+                    <li key={`${date}-${index}-${event.summary}`} className="flex items-start space-x-3">
+                      <span className="w-14 flex-shrink-0 text-right font-mono text-sm pt-0.5 text-gray-500">
                         {event.isAllDay ? '終日' : `${event.startTime}`}
                       </span>
-                      <span className={`flex-grow ${theme.textPrimary}`}>
+                      <span className={`flex-grow ${theme.textPrimary} text-base`}>
                         {event.summary}
                       </span>
                     </li>
