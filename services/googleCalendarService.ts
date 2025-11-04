@@ -51,7 +51,7 @@ const formatApiTime = (dateTime: { dateTime?: string; date?: string }, isEnd: bo
 
 
 /**
- * Fetches event data from Google Calendar API for the current day from multiple calendars.
+ * Fetches event data from Google Calendar API for the next 7 days from multiple calendars.
  * Requires a valid OAuth 2.0 access token.
  * @param accessToken The OAuth 2.0 access token for authorization.
  * @param calendarIds An array of calendar IDs to fetch events from.
@@ -66,8 +66,10 @@ export const fetchGoogleCalendarEvents = async (accessToken: string, calendarIds
   today.setHours(0, 0, 0, 0);
   const timeMin = today.toISOString();
   
-  today.setHours(23, 59, 59, 999);
-  const timeMax = today.toISOString();
+  const sevenDaysLater = new Date();
+  sevenDaysLater.setDate(sevenDaysLater.getDate() + 6); // Today + 6 days = 7 days total
+  sevenDaysLater.setHours(23, 59, 59, 999);
+  const timeMax = sevenDaysLater.toISOString();
 
   const fetchPromises = calendarIds.map(calendarId => {
     const apiUrl = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`);
@@ -102,16 +104,27 @@ export const fetchGoogleCalendarEvents = async (accessToken: string, calendarIds
   const allEvents: CalendarEvent[] = [];
   results.forEach(data => {
     if (data && data.items) {
-      const events: CalendarEvent[] = data.items.map((item: any) => ({
-        summary: item.summary || '（タイトルなし）',
-        startTime: formatApiTime(item.start),
-        endTime: formatApiTime(item.end, true),
-        isAllDay: !!item.start.date, // If 'date' property exists, it's an all-day event
-      }));
+      const events: CalendarEvent[] = data.items.map((item: any) => {
+        const eventDate = item.start.dateTime ? item.start.dateTime.substring(0, 10) : item.start.date;
+        return {
+          summary: item.summary || '（タイトルなし）',
+          startTime: formatApiTime(item.start),
+          endTime: formatApiTime(item.end, true),
+          isAllDay: !!item.start.date, // If 'date' property exists, it's an all-day event
+          date: eventDate,
+        };
+      });
       allEvents.push(...events);
     }
   });
 
-  // Combine events from all calendars and sort them by start time.
-  return allEvents.sort((a, b) => a.startTime.localeCompare(b.startTime));
+  // Combine events from all calendars and sort them by date and start time.
+  return allEvents.sort((a, b) => {
+    if (a.isAllDay && !b.isAllDay) return -1;
+    if (!a.isAllDay && b.isAllDay) return 1;
+
+    const aDateTime = `${a.date}T${a.startTime}`;
+    const bDateTime = `${b.date}T${b.startTime}`;
+    return aDateTime.localeCompare(bDateTime);
+  });
 };

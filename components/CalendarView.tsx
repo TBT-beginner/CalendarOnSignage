@@ -8,6 +8,7 @@ import AllDayEventsBanner from './AllDayEventsBanner';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SettingsIcon from './icons/SettingsIcon';
+import WeeklyView from './WeeklyView';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
@@ -35,9 +36,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
 
     return () => clearInterval(timerId);
   }, []);
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const todayString = `${year}-${month}-${day}`;
+
+  const todaysEvents = events.filter(e => e.date === todayString);
+  const weeklyEvents = events.filter(e => e.date > todayString);
   
-  const allDayEvents = events.filter(e => e.isAllDay);
-  const timedEvents = events.filter(e => !e.isAllDay);
+  const allDayEvents = todaysEvents.filter(e => e.isAllDay);
+  const timedEvents = todaysEvents.filter(e => !e.isAllDay);
 
   const getEventStatus = (event: CalendarEvent): 'past' | 'current' | 'upcoming' => {
     if (currentTime > event.endTime) {
@@ -126,27 +136,30 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
               <TimelineOverview events={timedEvents} eventStatuses={eventStatuses} />
             </div>
 
-            <div 
-              className={`w-full lg:w-1/3 flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6`}
-              style={{ boxShadow: theme.clayShadow }}
-            >
-              <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2`}>
-                次の予定
-              </h2>
-              <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
-                {nextUpcomingEvent ? (
-                  <div>
-                    <p className={`${theme.fontDisplay} text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
-                    <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
-                  </div>
-                ) : (
-                  <div className="flex-grow flex items-center justify-center">
-                    <p className={`${theme.textMuted} text-lg sm:text-xl`}>
-                      {isLoading ? '予定を読み込んでいます...' : (events.length > 0 ? '今日の予定はすべて終了しました。' : '今日の予定はありません。')}
-                    </p>
-                  </div>
-                )}
+            <div className="w-full lg:w-1/3 flex flex-col gap-6">
+              <div 
+                className={`flex flex-col ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-6`}
+                style={{ boxShadow: theme.clayShadow }}
+              >
+                <h2 className={`text-xl sm:text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b ${theme.border} pb-2`}>
+                  次の予定
+                </h2>
+                <div className="flex-grow flex flex-col justify-center min-h-[10rem]">
+                  {nextUpcomingEvent ? (
+                    <div>
+                      <p className={`${theme.fontDisplay} text-xl sm:text-2xl ${theme.textSecondary}`}>{nextUpcomingEvent.startTime} - {nextUpcomingEvent.endTime}</p>
+                      <h3 className={`text-2xl sm:text-3xl font-bold ${theme.textPrimary} mt-1 leading-tight`}>{nextUpcomingEvent.summary}</h3>
+                    </div>
+                  ) : (
+                    <div className="flex-grow flex items-center justify-center">
+                      <p className={`${theme.textMuted} text-lg sm:text-xl`}>
+                        {isLoading ? '予定を読み込んでいます...' : (todaysEvents.length > 0 ? '今日の予定はすべて終了しました。' : '今日の予定はありません。')}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
+              <WeeklyView events={weeklyEvents} />
             </div>
           </main>
         </>
