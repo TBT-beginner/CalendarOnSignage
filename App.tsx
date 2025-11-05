@@ -6,17 +6,25 @@ import { CalendarEvent, CalendarListEntry } from './types';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useGoogleAuth } from './hooks/useGoogleAuth';
 import CalendarSelectionModal from './components/CalendarSelectionModal';
+import ReAuthModal from './components/ReAuthModal';
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
   const [availableCalendars, setAvailableCalendars] = useState<CalendarListEntry[]>([]);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [showReAuthModal, setShowReAuthModal] = useState(false);
   const [showEndTime, setShowEndTime] = useState(true);
   
   const auth = useGoogleAuth();
+
+  useEffect(() => {
+    if(auth.needsReAuth) {
+      setShowReAuthModal(true);
+    }
+  }, [auth.needsReAuth]);
+
 
   useEffect(() => {
     try {
@@ -46,19 +54,15 @@ function App() {
   const fetchEvents = useCallback(async () => {
     if (auth.accessToken && selectedCalendarIds.length > 0) {
       setIsLoading(true);
-      setFetchError(null);
       try {
         const fetchedEvents = await fetchGoogleCalendarEvents(auth.accessToken, selectedCalendarIds);
         setEvents(fetchedEvents);
       } catch (e) {
-        if (e instanceof Error) {
-          setFetchError(e.message);
-          if (e.message.includes('認証')) {
-              // Token likely expired. Attempt a silent refresh.
-              auth.refreshToken();
-          }
+        if (e instanceof Error && e.message.includes('認証')) {
+          console.log('Authentication error detected, attempting refresh...');
+          auth.refreshToken();
         } else {
-          setFetchError('不明なエラーが発生しました。');
+          console.error("Failed to fetch calendar events:", e);
         }
       } finally {
         setIsLoading(false);
@@ -91,10 +95,20 @@ function App() {
   const handleSignOut = () => {
     auth.signOut();
     setEvents([]);
-    setFetchError(null);
     setSelectedCalendarIds([]);
     localStorage.removeItem('selectedCalendarIds');
   };
+
+  const handleReAuthConfirm = () => {
+    setShowReAuthModal(false);
+    auth.signIn();
+  };
+
+  const handleReAuthCancel = () => {
+    setShowReAuthModal(false);
+    auth.signOut();
+  };
+
 
   const handleOpenCalendarSelection = async () => {
     if (!auth.accessToken) return;
@@ -104,7 +118,6 @@ function App() {
         setIsCalendarModalOpen(true);
     } catch(e) {
         if (e instanceof Error) {
-            setFetchError(e.message);
             if (e.message.includes('認証')) {
                 auth.refreshToken();
             }
@@ -126,15 +139,13 @@ function App() {
     });
   };
 
-  const combinedError = auth.error || fetchError;
-
   return (
     <ThemeProvider>
       {!auth.accessToken ? (
         <SetupView
           onSignIn={auth.signIn}
           isGsiReady={auth.isGsiReady}
-          error={combinedError}
+          error={auth.error}
           isLoading={isLoading}
         />
       ) : (
@@ -155,6 +166,11 @@ function App() {
             onSave={handleSaveSelectedCalendars}
             showEndTime={showEndTime}
             onToggleShowEndTime={handleToggleShowEndTime}
+          />
+          <ReAuthModal 
+            isOpen={showReAuthModal}
+            onConfirm={handleReAuthConfirm}
+            onCancel={handleReAuthCancel}
           />
         </>
       )}
