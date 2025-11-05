@@ -54,7 +54,10 @@ function App() {
         if (e instanceof Error) {
           setFetchError(e.message);
           if (e.message.includes('認証')) {
-              auth.signOut();
+              // Token likely expired. Instead of signing out, try to re-authenticate.
+              // The GIS library will attempt a silent token refresh. If that fails,
+              // it will prompt the user to sign in again.
+              auth.signIn();
           }
         } else {
           setFetchError('不明なエラーが発生しました。');
@@ -66,7 +69,7 @@ function App() {
       setEvents([]);
       setIsLoading(false);
     }
-  }, [auth.accessToken, selectedCalendarIds, auth.signOut]);
+  }, [auth.accessToken, selectedCalendarIds, auth.signIn, auth.signOut]);
 
   useEffect(() => {
     fetchEvents();
@@ -102,7 +105,12 @@ function App() {
         setAvailableCalendars(calendars);
         setIsCalendarModalOpen(true);
     } catch(e) {
-        if (e instanceof Error) setFetchError(e.message);
+        if (e instanceof Error) {
+            setFetchError(e.message);
+            if (e.message.includes('認証')) {
+                auth.signIn();
+            }
+        }
     }
   };
 
