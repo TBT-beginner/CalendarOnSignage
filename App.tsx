@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import SetupView from './components/SetupView';
 import CalendarView from './components/CalendarView';
 import { fetchGoogleCalendarEvents, fetchCalendarList } from './services/googleCalendarService';
+import { generateSampleCalendarEvents } from './services/geminiService';
 import { CalendarEvent, CalendarListEntry } from './types';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useGoogleAuth } from './hooks/useGoogleAuth';
@@ -17,6 +18,10 @@ function App() {
   const [showReAuthModal, setShowReAuthModal] = useState(false);
   const [showEndTime, setShowEndTime] = useState(true);
   
+  // New state for Demo Mode
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isLoadingDemo, setIsLoadingDemo] = useState(false);
+
   const auth = useGoogleAuth();
 
   useEffect(() => {
@@ -52,6 +57,7 @@ function App() {
   }, []);
 
   const fetchEvents = useCallback(async () => {
+    if (isDemoMode) return; // Don't fetch from Google in demo mode
     if (auth.accessToken && selectedCalendarIds.length > 0) {
       setIsLoading(true);
       try {
@@ -71,7 +77,7 @@ function App() {
       setEvents([]);
       setIsLoading(false);
     }
-  }, [auth.accessToken, selectedCalendarIds, auth.refreshToken]);
+  }, [auth.accessToken, selectedCalendarIds, auth.refreshToken, isDemoMode]);
 
   useEffect(() => {
     fetchEvents();
@@ -79,18 +85,32 @@ function App() {
 
   // Automatically refresh events every 15 minutes
   useEffect(() => {
-    if (!auth.accessToken || selectedCalendarIds.length === 0) {
-      return; // Don't start the timer if not logged in or no calendars are selected
+    if (isDemoMode || !auth.accessToken || selectedCalendarIds.length === 0) {
+      return; // Don't start the timer in demo mode, or if not logged in, or no calendars are selected
     }
 
     const intervalId = setInterval(() => {
       fetchEvents();
     }, 15 * 60 * 1000); // 15 minutes
 
-    // Clear the interval on cleanup
     return () => clearInterval(intervalId);
-  }, [auth.accessToken, selectedCalendarIds, fetchEvents]);
+  }, [auth.accessToken, selectedCalendarIds, fetchEvents, isDemoMode]);
 
+  const handleStartDemo = useCallback(async () => {
+    setIsLoadingDemo(true);
+    auth.setError(null);
+    try {
+      const demoEvents = await generateSampleCalendarEvents();
+      setEvents(demoEvents);
+      setIsDemoMode(true);
+    } catch (error) {
+      console.error("Failed to start demo:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      auth.setError(`デモデータの生成に失敗しました: ${errorMessage}`);
+    } finally {
+      setIsLoadingDemo(false);
+    }
+  }, [auth]);
 
   const handleSignOut = () => {
     auth.signOut();
@@ -98,6 +118,14 @@ function App() {
     setSelectedCalendarIds([]);
     localStorage.removeItem('selectedCalendarIds');
   };
+  
+  const handleExitDemo = () => {
+    setIsDemoMode(false);
+    setEvents([]);
+    auth.setError(null);
+  };
+
+  const onSignOutOrExitDemo = isDemoMode ? handleExitDemo : handleSignOut;
 
   const handleReAuthConfirm = () => {
     setShowReAuthModal(false);
@@ -111,7 +139,7 @@ function App() {
 
 
   const handleOpenCalendarSelection = async () => {
-    if (!auth.accessToken) return;
+    if (!auth.accessToken || isDemoMode) return;
     try {
         const calendars = await fetchCalendarList(auth.accessToken);
         setAvailableCalendars(calendars);
@@ -139,41 +167,45 @@ function App() {
     });
   };
 
-  return (
-    <ThemeProvider>
-      {!auth.accessToken ? (
+  if (!auth.accessToken && !isDemoMode) {
+    return (
+      <ThemeProvider>
         <SetupView
           onSignIn={auth.signIn}
           isGsiReady={auth.isGsiReady}
           error={auth.error}
-          isLoading={isLoading}
+          isLoading={isLoadingDemo || !auth.isGsiReady}
+          onStartDemo={handleStartDemo}
         />
-      ) : (
-        <>
-          <CalendarView
-            events={events}
-            onSignOut={handleSignOut}
-            onOpenCalendarSelection={handleOpenCalendarSelection}
-            hasSelectedCalendars={selectedCalendarIds.length > 0}
-            isLoading={isLoading}
-            showEndTime={showEndTime}
-          />
-          <CalendarSelectionModal
-            isOpen={isCalendarModalOpen}
-            onClose={() => setIsCalendarModalOpen(false)}
-            availableCalendars={availableCalendars}
-            selectedIds={selectedCalendarIds}
-            onSave={handleSaveSelectedCalendars}
-            showEndTime={showEndTime}
-            onToggleShowEndTime={handleToggleShowEndTime}
-          />
-          <ReAuthModal 
-            isOpen={showReAuthModal}
-            onConfirm={handleReAuthConfirm}
-            onCancel={handleReAuthCancel}
-          />
-        </>
-      )}
+      </ThemeProvider>
+    );
+  }
+
+  return (
+    <ThemeProvider>
+      <CalendarView
+        events={events}
+        onSignOut={onSignOutOrExitDemo}
+        onOpenCalendarSelection={handleOpenCalendarSelection}
+        hasSelectedCalendars={selectedCalendarIds.length > 0}
+        isLoading={isLoading || isLoadingDemo}
+        showEndTime={showEndTime}
+        isDemoMode={isDemoMode}
+      />
+      <CalendarSelectionModal
+        isOpen={isCalendarModalOpen}
+        onClose={() => setIsCalendarModalOpen(false)}
+        availableCalendars={availableCalendars}
+        selectedIds={selectedCalendarIds}
+        onSave={handleSaveSelectedCalendars}
+        showEndTime={showEndTime}
+        onToggleShowEndTime={handleToggleShowEndTime}
+      />
+      <ReAuthModal 
+        isOpen={showReAuthModal}
+        onConfirm={handleReAuthConfirm}
+        onCancel={handleReAuthCancel}
+      />
     </ThemeProvider>
   );
 }

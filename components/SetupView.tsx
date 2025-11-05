@@ -8,6 +8,7 @@ interface SetupViewProps {
   isLoading: boolean;
   isGsiReady: boolean;
   error: string | null;
+  onStartDemo: () => void;
 }
 
 const GoogleIcon = () => (
@@ -19,7 +20,7 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) => {
+const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error, isLoading, onStartDemo }) => {
   const { theme } = useTheme();
 
   const handleSignIn = (e: React.FormEvent) => {
@@ -47,20 +48,31 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
         <p className={`text-base sm:text-lg mb-8 ${theme.textSecondary}`}>
           見やすい、大きな文字で今日の予定を表示します。
         </p>
-        <p className={`text-sm mb-8 ${theme.textMuted}`}>
-          Googleアカウントでサインインして、カレンダーへのアクセスを許可してください。
-        </p>
-
-        <form onSubmit={handleSignIn}>
+        
+        <form onSubmit={handleSignIn} className="w-full">
           <button
             type="submit"
-            disabled={!isGsiReady}
+            disabled={!isGsiReady || isLoading}
             className={`w-full font-bold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.button} ${theme.buttonText} ${theme.buttonHover} disabled:opacity-75 disabled:cursor-not-allowed`}
           >
             <GoogleIcon />
             {isGsiReady ? 'Googleでサインイン' : '準備中...'}
           </button>
         </form>
+
+        <div className="relative flex py-5 items-center">
+            <div className={`flex-grow border-t ${theme.border}`}></div>
+            <span className={`flex-shrink mx-4 text-sm ${theme.textMuted}`}>または</span>
+            <div className={`flex-grow border-t ${theme.border}`}></div>
+        </div>
+
+        <button
+            onClick={onStartDemo}
+            disabled={isLoading}
+            className={`w-full font-semibold py-4 px-6 rounded-2xl text-lg sm:text-xl transition-all flex items-center justify-center ${theme.iconButton} hover:bg-opacity-80 disabled:opacity-75 disabled:cursor-not-allowed`}
+          >
+           {isLoading ? 'デモを準備中...' : 'サインインせずに試す'}
+        </button>
         
         {error && (
           <div className="mt-8 text-left text-sm">
@@ -70,8 +82,8 @@ const SetupView: React.FC<SetupViewProps> = ({ onSignIn, isGsiReady, error }) =>
                   <ExclamationIcon className={'text-red-500'} />
                 </div>
                 <div className={`ml-3 flex-1 text-red-800`}>
-                  <p className={`font-bold text-red-700`}>Google認証エラー</p>
-                  <p>サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。</p>
+                  <p className={`font-bold text-red-700`}>エラーが発生しました</p>
+                  <p>{error.includes('Google') ? 'サインインできませんでした。根本的な原因はGoogle Cloud側の設定にある可能性が高いです。' : 'デモを開始できませんでした。'}</p>
                   <p className={`mt-2 font-mono text-xs p-2 rounded break-words bg-red-500/20 text-red-900`}>{error}</p>
                 </div>
               </div>
