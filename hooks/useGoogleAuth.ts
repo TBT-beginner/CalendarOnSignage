@@ -10,7 +10,7 @@ declare namespace google {
         error_description?: string;
       }
       interface TokenClient {
-        requestAccessToken: (overrideConfig?: object) => void;
+        requestAccessToken: (overrideConfig?: { prompt?: string }) => void;
       }
       interface TokenClientConfig {
         client_id: string;
@@ -70,9 +70,15 @@ export const useGoogleAuth = () => {
         scope: SCOPES,
         callback: (tokenResponse) => {
           if (tokenResponse.error) {
-            setError(tokenResponse.error_description || 'サインイン中にエラーが発生しました。');
+            if (tokenResponse.error_description?.includes('suppressed')) {
+              // This is a typical silent refresh failure.
+              setError('セッションの有効期限が切れました。再度サインインしてください。');
+            } else {
+              setError(tokenResponse.error_description || 'サインイン中にエラーが発生しました。');
+            }
             setAccessToken(null);
           } else {
+            setError(null);
             setAccessToken(tokenResponse.access_token);
           }
         },
@@ -85,9 +91,16 @@ export const useGoogleAuth = () => {
     setError(null);
     if (tokenClient) {
       // Prompt the user to select a Google Account and grant access
-      tokenClient.requestAccessToken();
+      tokenClient.requestAccessToken({});
     } else {
         setError('サインインクライアントの準備ができていません。');
+    }
+  }, [tokenClient]);
+
+  const refreshToken = useCallback(() => {
+    if (tokenClient) {
+      // Attempt to get a token silently without prompting the user.
+      tokenClient.requestAccessToken({ prompt: 'none' });
     }
   }, [tokenClient]);
 
@@ -100,5 +113,5 @@ export const useGoogleAuth = () => {
     setAccessToken(null);
   }, [accessToken]);
 
-  return { accessToken, signIn, signOut, isGsiReady, error, clearError: () => setError(null) };
+  return { accessToken, signIn, signOut, isGsiReady, error, refreshToken, clearError: () => setError(null) };
 };
