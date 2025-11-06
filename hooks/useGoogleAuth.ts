@@ -28,7 +28,8 @@ const GOOGLE_CLIENT_ID = '300899135297-dvg6chennc6311advc9f57n9smrqogci.apps.goo
 
 // The scope determines which parts of the user's data the application can access.
 // 'calendar.readonly' allows viewing events on calendars.
-const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+// 'spreadsheets' allows reading and writing to Google Sheets.
+const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/spreadsheets';
 
 // Extend the Window interface to include the `google` object from the GSI library
 declare global {

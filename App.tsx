@@ -70,7 +70,7 @@ function App() {
       setEvents([]);
       setIsLoading(false);
     }
-  }, [auth.accessToken, selectedCalendarIds, auth.signIn, auth.signOut]);
+  }, [auth.accessToken, selectedCalendarIds, auth.signIn]);
 
   useEffect(() => {
     fetchEvents();
@@ -149,6 +149,7 @@ function App() {
             hasSelectedCalendars={selectedCalendarIds.length > 0}
             isLoading={isLoading}
             showEndTime={showEndTime}
+            accessToken={auth.accessToken}
           />
           <CalendarSelectionModal
             isOpen={isCalendarModalOpen}
