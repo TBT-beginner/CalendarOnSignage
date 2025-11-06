@@ -220,7 +220,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                                 )}
                            </button>
                            {hoveredMember === name && !status.isPresent && status.comment && (
-                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 opacity-90 transition-opacity">
+                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md py-1.5 px-3 z-10 opacity-90 transition-opacity shadow-lg">
                                    {status.comment}
                                </div>
                            )}
@@ -229,10 +229,10 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                 })}
             </div>
 
-            <div className={`mt-3 transition-all duration-300 h-24 ${selectedForComment ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div className={`mt-3 h-28 transition-opacity duration-300 ${selectedForComment ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                {selectedForComment && (
-                 <div>
-                    <label htmlFor="comment" className={`block text-sm font-bold mb-1 ${theme.textPrimary}`}>
+                 <div className="h-full flex flex-col">
+                    <label htmlFor="comment" className={`block text-sm font-bold mb-1 flex-shrink-0 ${theme.textPrimary}`}>
                        {selectedForComment}さんの不在理由:
                     </label>
                     <textarea
@@ -240,9 +240,8 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                         value={currentComment}
                         onChange={(e) => handleCommentChange(e.target.value)}
                         placeholder="例: 外出 (15時まで)"
-                        className={`w-full p-2 rounded-md text-sm border-2 transition-colors focus:outline-none resize-none ${theme.cardBorder} ${theme.textPrimary}`}
+                        className={`w-full p-2 rounded-md text-sm border-2 transition-colors focus:outline-none resize-none flex-grow ${theme.cardBorder} ${theme.textPrimary}`}
                         style={{ backgroundColor: 'transparent' }}
-                        rows={2}
                     />
                  </div>
                )}
