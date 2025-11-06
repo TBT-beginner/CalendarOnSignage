@@ -174,12 +174,12 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
     <div
       className={`w-full overflow-hidden rounded-2xl shadow-lg ${theme.cardBg} ${theme.cardBorder}`}
     >
-      <div className="p-4 md:p-6 relative">
-        {isSaving && <Spinner className={`absolute h-5 w-5 ${theme.textPrimary} top-4 right-4 md:top-6 md:right-6`} />}
+      <div className="p-4 relative">
+        {isSaving && <Spinner className={`absolute h-5 w-5 ${theme.textPrimary} top-4 right-4`} />}
         {error ? (
           renderError()
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             {MEMBERS.map((name) => {
                 const status = state[name];
                 const isUpdated = updatedFromRemote.has(name);
@@ -199,17 +199,17 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                        <button
                             type="button"
                             onClick={() => handleStatusChange(name)}
-                            className={`w-full h-14 md:h-16 rounded-t-md font-bold text-base md:text-lg text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                            className={`w-full h-12 rounded-t-md font-bold text-base text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
                        >
                             <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
                             {name}
                        </button>
-                       <div className="p-1.5 h-20">
+                       <div className="p-1 h-16">
                          <textarea
                             value={status.comment}
                             onChange={(e) => handleCommentChange(name, e.target.value)}
                             placeholder="不在理由..."
-                            className={`w-full h-full p-1.5 rounded-md text-sm border-2 transition-opacity duration-300 focus:outline-none resize-none ${theme.border} ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            className={`w-full h-full p-1 rounded-md text-sm border-2 transition-opacity duration-300 focus:outline-none resize-none ${theme.border} ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                             style={{ backgroundColor: 'transparent' }}
                             disabled={status.isPresent}
                          />
