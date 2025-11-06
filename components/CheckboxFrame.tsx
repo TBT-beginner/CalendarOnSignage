@@ -118,7 +118,29 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
     const detailsBgColor = theme.name === 'Light' ? 'bg-gray-100' : 'bg-black/20';
     const detailsTextColor = theme.name === 'Light' ? 'text-gray-700' : 'text-gray-300';
 
-    if (error.includes('[403]')) {
+    if (error.includes('API has not been used') || error.includes('sheets.googleapis.com/overview')) {
+        title = 'APIが無効です';
+        message = 'Google Sheets APIがプロジェクトで有効になっていません。';
+        
+        const urlMatch = error.match(/https?:\/\/console\.developers\.google\.com\/apis\/api\/sheets\.googleapis\.com\/overview\?project=\d+/);
+        const enableApiUrl = urlMatch ? urlMatch[0] : 'https://console.cloud.google.com/apis/library/sheets.googleapis.com';
+
+        solution = (
+            <div className={`mt-2 text-left text-xs p-2 rounded-lg ${solutionBgColor} ${solutionTextColor}`}>
+                <p className="font-bold">対処法:</p>
+                <ol className="list-decimal list-inside mt-1 space-y-1">
+                    <li>
+                        <a href={enableApiUrl} target="_blank" rel="noopener noreferrer" className={`underline font-semibold ${solutionLinkColor}`}>
+                            こちらのリンクを開いて
+                        </a>
+                        、Google Sheets APIを有効にしてください。
+                    </li>
+                    <li>APIを有効にした後、数分待ってからページを再読み込みしてください。</li>
+                </ol>
+                <p className="mt-2"><strong>注:</strong> この操作は、このアプリケーションが使用しているGoogle Cloudプロジェクトのオーナーまたは編集者の権限を持つアカウントで行う必要があります。</p>
+            </div>
+        );
+    } else if (error.includes('[403]')) {
       title = '権限がありません';
       message = 'スプレッドシートへのアクセスが拒否されました。';
       solution = (
