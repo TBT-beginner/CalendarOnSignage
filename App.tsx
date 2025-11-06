@@ -149,7 +149,6 @@ function App() {
             hasSelectedCalendars={selectedCalendarIds.length > 0}
             isLoading={isLoading}
             showEndTime={showEndTime}
-            accessToken={auth.accessToken}
           />
           <CalendarSelectionModal
             isOpen={isCalendarModalOpen}

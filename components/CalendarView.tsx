@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
@@ -7,7 +8,6 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SettingsIcon from './icons/SettingsIcon';
 import WeeklyView from './WeeklyView';
-import CheckboxFrame from './CheckboxFrame';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
@@ -16,10 +16,9 @@ interface CalendarViewProps {
   hasSelectedCalendars: boolean;
   isLoading: boolean;
   showEndTime: boolean;
-  accessToken: string;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime }) => {
   const { theme } = useTheme();
 
   const [position, setPosition] = useState({ x: 20, y: 20 });
@@ -81,21 +80,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', handleDragEnd);
   }, [position, handleDragMove, handleDragEnd, handleTouchMove]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button')) {
-      return;
-    }
-    e.preventDefault();
-    handleDragStart(e.clientX, e.clientY);
-  }, [handleDragStart]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button')) {
-      return;
-    }
-    const touch = e.touches[0];
-    handleDragStart(touch.clientX, touch.clientY);
+  
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'iframe-drag-start' && event.data.payload) {
+        const { clientX, clientY } = event.data.payload;
+        handleDragStart(clientX, clientY);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, [handleDragStart]);
 
   const today = new Date();
@@ -188,17 +184,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       
       <div
         ref={frameRef}
-        className={`fixed w-auto transition-shadow duration-200 z-20 ${isDragging ? 'shadow-2xl cursor-grabbing' : 'cursor-grab'}`}
+        className="fixed z-20"
         style={{
           right: `${position.x}px`,
           bottom: `${position.y}px`,
           userSelect: isDragging ? 'none' : 'auto',
-          touchAction: 'none',
         }}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
       >
-        <CheckboxFrame accessToken={accessToken} />
+         <iframe
+          src="/checkbox-frame.html"
+          title="メンバー在席確認"
+          className={`w-[26rem] h-[25rem] border-none transition-opacity duration-300 ${isDragging ? 'pointer-events-none opacity-75' : 'opacity-100'}`}
+          style={{ backgroundColor: 'transparent' }}
+        />
       </div>
     </div>
   );
