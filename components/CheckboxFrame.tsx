@@ -12,7 +12,7 @@ const createInitialState = (): CheckboxState => {
   }, {} as CheckboxState);
 };
 
-const POLLING_INTERVAL = 60000;
+const POLLING_INTERVAL = 600000;
 const HIGHLIGHT_DURATION = 1500;
 const SAVE_DEBOUNCE_MS = 1000;
 
