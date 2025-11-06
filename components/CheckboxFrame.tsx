@@ -24,7 +24,7 @@ const CheckboxFrame: React.FC = () => {
   }, [state]);
   
   const fetchData = useCallback(async () => {
-    // Do not refresh if user is currently saving to avoid conflicts
+    // ユーザーが状態を保存中は、ポーリングによる上書きを防ぐ
     if (isSaving) return;
 
     try {
@@ -72,15 +72,30 @@ const CheckboxFrame: React.FC = () => {
 
   const handleChange = async (name: string) => {
     setIsSaving(true);
-    const newState = { ...state, [name]: !state[name] };
-    setState(newState); // Optimistic UI update
+    
+    // 1. UIを即時反映させるためのオプティミスティック更新
+    const optimisticState = { ...state, [name]: !state[name] };
+    setState(optimisticState);
 
     try {
-      await setCheckboxState(newState);
+      // 2. 競合を避けるため、書き込む直前に最新の状態を読み込む (Read)
+      const remoteState = await getCheckboxState() || INITIAL_STATE;
+      
+      // 3. 最新の状態にユーザーの意図を反映させる (Modify)
+      const finalState = { ...remoteState, [name]: optimisticState[name] };
+      
+      // 4. 最終的な状態を保存する (Write)
+      await setCheckboxState(finalState);
+      
+      // 5. 保存後、ローカルの状態を保存された最新の状態に同期する
+      // これにより、書き込み中に他のデバイスで行われた変更も反映される
+      setState(finalState);
+
     } catch (error) {
       console.error("Failed to save checkbox state:", error);
-      // Optional: Revert state on error by refetching
-      await fetchData();
+      // エラー発生時は、サーバーの正しい状態でUIを元に戻す
+      const currentState = await getCheckboxState() || INITIAL_STATE;
+      setState(currentState);
     } finally {
       setIsSaving(false);
     }
