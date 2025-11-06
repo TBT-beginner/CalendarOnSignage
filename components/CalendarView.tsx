@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
 import TimelineOverview from './TimelineOverview';
@@ -22,6 +22,82 @@ interface CalendarViewProps {
 const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken }) => {
   const { theme } = useTheme();
 
+  const [position, setPosition] = useState({ x: 20, y: 20 });
+  const [isDragging, setIsDragging] = useState(false);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const dragOffset = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    try {
+      const savedPosition = localStorage.getItem('checkboxFramePosition');
+      if (savedPosition) {
+        const parsed = JSON.parse(savedPosition);
+        if (typeof parsed.x === 'number' && typeof parsed.y === 'number') {
+          setPosition(parsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse frame position from localStorage", e);
+    }
+  }, []);
+
+  const handleDragMove = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    const newX = dragOffset.current.x - e.clientX;
+    const newY = dragOffset.current.y - e.clientY;
+    setPosition({ x: newX, y: newY });
+  }, []);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const newX = dragOffset.current.x - touch.clientX;
+    const newY = dragOffset.current.y - touch.clientY;
+    setPosition({ x: newX, y: newY });
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    window.removeEventListener('mousemove', handleDragMove);
+    window.removeEventListener('mouseup', handleDragEnd);
+    window.removeEventListener('touchmove', handleTouchMove);
+    window.removeEventListener('touchend', handleDragEnd);
+  }, [handleDragMove, handleTouchMove]);
+
+  useEffect(() => {
+    if (!isDragging) {
+      localStorage.setItem('checkboxFramePosition', JSON.stringify(position));
+    }
+  }, [position, isDragging]);
+
+  const handleDragStart = useCallback((clientX: number, clientY: number) => {
+    setIsDragging(true);
+    dragOffset.current = {
+      x: clientX + position.x,
+      y: clientY + position.y,
+    };
+    window.addEventListener('mousemove', handleDragMove);
+    window.addEventListener('mouseup', handleDragEnd);
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleDragEnd);
+  }, [position, handleDragMove, handleDragEnd, handleTouchMove]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    e.preventDefault();
+    handleDragStart(e.clientX, e.clientY);
+  }, [handleDragStart]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    const touch = e.touches[0];
+    handleDragStart(touch.clientX, touch.clientY);
+  }, [handleDragStart]);
+
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -30,7 +106,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
 
   const todaysEvents = events
     .filter(e => e.date === todayString)
-    .sort((a, b) => { // Ensure all-day events come first
+    .sort((a, b) => {
         if (a.isAllDay && !b.isAllDay) return -1;
         if (!a.isAllDay && b.isAllDay) return 1;
         if (a.isAllDay && b.isAllDay) return a.summary.localeCompare(b.summary);
@@ -110,7 +186,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           </button>
       </footer>
       
-      <div className="fixed bottom-5 left-5 w-auto">
+      <div
+        ref={frameRef}
+        className={`fixed w-auto transition-shadow duration-200 z-20 ${isDragging ? 'shadow-2xl cursor-grabbing' : 'cursor-grab'}`}
+        style={{
+          right: `${position.x}px`,
+          bottom: `${position.y}px`,
+          userSelect: isDragging ? 'none' : 'auto',
+          touchAction: 'none',
+        }}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+      >
         <CheckboxFrame accessToken={accessToken} />
       </div>
     </div>
