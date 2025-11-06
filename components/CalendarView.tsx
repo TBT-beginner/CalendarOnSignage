@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
 import TimelineOverview from './TimelineOverview';
@@ -21,6 +21,24 @@ interface CalendarViewProps {
 
 const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken }) => {
   const { theme } = useTheme();
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000); // Update every second to keep it in sync with the clock
+
+    return () => clearInterval(timerId);
+  }, []);
+
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    const weekday = weekdays[date.getDay()];
+    return `${year}年${month}月${day}日 ${weekday}曜日`;
+  };
 
   const today = new Date();
   const year = today.getFullYear();
@@ -41,7 +59,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   
   return (
     <div className={`flex flex-col h-screen p-4 sm:p-6 md:p-8 ${theme.fontDisplay}`}>
-      <header className={`flex flex-col sm:flex-row items-center gap-4 mb-4 flex-shrink-0`}>
+      <header className={`flex items-center gap-4 mb-4 flex-shrink-0`}>
         {/* Left Side */}
         <div className="flex-1 flex justify-start">
             <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
@@ -70,12 +88,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         </div>
 
         {/* Center: Clock */}
-        <div className="order-first sm:order-none">
+        <div className="flex-shrink-0">
             <Clock />
         </div>
 
-        {/* Right Side (spacer for centering clock) */}
-        <div className="flex-1"></div>
+        {/* Right Side: Date */}
+        <div className="flex-1 flex justify-end items-center">
+             <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext}`}>
+                {formatDate(currentDate)}
+            </div>
+        </div>
       </header>
       
       { !hasSelectedCalendars && !isLoading ? (
@@ -110,16 +132,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           </div>
         </main>
       )}
-
-
-      <footer className="mt-auto pt-6 text-center flex-shrink-0">
-          <button 
-            onClick={onSignOut}
-            className={`${theme.textMuted} hover:${theme.textPrimary} transition text-sm font-semibold`}
-          >
-            サインアウト
-          </button>
-      </footer>
     </div>
   );
 };

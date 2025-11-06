@@ -22,22 +22,10 @@ const Clock: React.FC = () => {
     hour12: false,
   };
 
-  const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-    const weekday = weekdays[date.getDay()];
-    return `${year}年${month}月${day}日 ${weekday}曜日`;
-  };
-
   return (
-    <div className="w-full sm:w-auto text-center">
+    <div className="text-center">
       <div className={`font-mono-bold text-4xl sm:text-5xl md:text-7xl tracking-tighter ${theme.headerText}`}>
         {currentTime.toLocaleTimeString('ja-JP', timeOptions)}
-      </div>
-      <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext}`}>
-        {formatDate(currentTime)}
       </div>
     </div>
   );
