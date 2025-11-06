@@ -8,6 +8,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SettingsIcon from './icons/SettingsIcon';
 import WeeklyView from './WeeklyView';
+import CheckboxFrame from './CheckboxFrame';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
@@ -25,9 +26,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const [isDragging, setIsDragging] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const dragOffset = useRef({ x: 0, y: 0 });
-  const [iframeReady, setIframeReady] = useState(false);
 
   useEffect(() => {
     try {
@@ -84,35 +83,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
     window.addEventListener('touchend', handleDragEnd);
   }, [position, handleDragMove, handleDragEnd, handleTouchMove]);
   
-  // Listen for messages from the iframe (drag start, ready signal)
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.source !== iframeRef.current?.contentWindow) {
-        return; // Ignore messages from other sources
-      }
-
-      if (event.data.type === 'iframe-drag-start' && event.data.payload) {
-        const { clientX, clientY } = event.data.payload;
-        handleDragStart(clientX, clientY);
-      } else if (event.data.type === 'iframe-ready') {
-        setIframeReady(true);
-      }
-    };
-    window.addEventListener('message', handleMessage);
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [handleDragStart]);
-
-  // Send the auth token to the iframe when both the iframe is ready and the token is available
-  useEffect(() => {
-    if (iframeReady && accessToken && iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        { type: 'auth-token', token: accessToken },
-        '*' // Use a specific origin in production
-      );
+  const handleInteractionStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    // Don't start drag if clicking on interactive elements
+    if (target.closest('button, textarea, a, input')) {
+        return;
     }
-  }, [iframeReady, accessToken]);
+    // Prevent default behavior for mouse events to stop text selection, etc.
+    if (e.type === 'mousedown') {
+      e.preventDefault();
+    }
+    const point = 'touches' in e ? e.touches[0] : e;
+    handleDragStart(point.clientX, point.clientY);
+  };
 
   const today = new Date();
   const year = today.getFullYear();
@@ -204,20 +187,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       
       <div
         ref={frameRef}
-        className="fixed z-20"
+        className="fixed z-20 cursor-grab"
         style={{
           right: `${position.x}px`,
           bottom: `${position.y}px`,
           userSelect: isDragging ? 'none' : 'auto',
         }}
+        onMouseDown={handleInteractionStart}
+        onTouchStart={handleInteractionStart}
       >
-         <iframe
-          ref={iframeRef}
-          src="/checkbox-frame.html"
-          title="メンバー在席確認"
-          className={`w-[26rem] h-[25rem] border-none transition-opacity duration-300 ${isDragging ? 'pointer-events-none opacity-75' : 'opacity-100'}`}
-          style={{ backgroundColor: 'transparent' }}
-        />
+        {accessToken && <CheckboxFrame accessToken={accessToken} />}
       </div>
     </div>
   );

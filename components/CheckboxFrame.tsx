@@ -115,25 +115,6 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
       }
   }, [accessToken, fetchData]);
 
-  const handleInteractionStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    // Don't start drag if clicking on interactive elements
-    if (target.closest('button, textarea, a, input')) {
-        return;
-    }
-
-    // Prevent default behavior for mouse events to stop text selection, etc.
-    if (e.type === 'mousedown') {
-      e.preventDefault();
-    }
-    
-    const point = 'touches' in e ? e.touches[0] : e;
-    window.parent.postMessage({
-        type: 'iframe-drag-start',
-        payload: { clientX: point.clientX, clientY: point.clientY }
-    }, '*');
-  };
-
   const handleStatusChange = (name: string) => {
     const newState = {
       ...state,
@@ -197,14 +178,12 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
 
   return (
     <div
-      className="transition-all overflow-hidden rounded-2xl shadow-2xl cursor-grab"
+      className="transition-all overflow-hidden rounded-2xl shadow-2xl w-[26rem]"
       style={{
         backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
       }}
-      onMouseDown={handleInteractionStart}
-      onTouchStart={handleInteractionStart}
     >
       <div className="p-4 relative">
         {isSaving && <Spinner className={`absolute top-3 right-3 h-5 w-5 ${theme.textPrimary}`} />}
