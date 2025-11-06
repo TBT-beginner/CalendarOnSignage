@@ -8,20 +8,11 @@ const INITIAL_STATE: CheckboxState = MEMBERS.reduce((acc, name) => ({ ...acc, [n
 const POLLING_INTERVAL = 5000; // 5 seconds
 
 const CheckboxFrame: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [state, setState] = useState<CheckboxState>(INITIAL_STATE);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
-  // Apply theme from parent window via URL query parameter
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const parentTheme = params.get('theme');
-    if (parentTheme && parentTheme !== theme.name.toLowerCase()) {
-      toggleTheme();
-    }
-  }, []); // Run only once on mount
-
   const fetchData = useCallback(async () => {
     // Do not refresh if user is currently saving to avoid conflicts
     if (isSaving) return;
