@@ -1,37 +1,58 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import CheckboxFrame from './components/CheckboxFrame';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-import { useGoogleAuth } from './hooks/useGoogleAuth';
 
-// Fix: Create a wrapper component to handle authentication.
-// The CheckboxFrame component requires an `accessToken` to function, but this entry point
-// was not providing it. This `CheckboxFrameApp` wrapper uses the `useGoogleAuth` hook
-// to manage user authentication. It displays a sign-in button if the user is not logged in,
-// and once an access token is available, it renders the CheckboxFrame with the required prop.
-const CheckboxFrameApp: React.FC = () => {
-  const auth = useGoogleAuth();
+const App: React.FC = () => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
 
-  if (!auth.accessToken) {
-    // If not authenticated, show a simple sign-in UI.
-    return (
-      <div className={`flex flex-col items-center justify-center h-full p-4 ${theme.textPrimary}`}>
-        {auth.error && <p className="text-red-500 mb-4 text-center">Error: {auth.error}</p>}
-        <button
-          onClick={auth.signIn}
-          disabled={!auth.isGsiReady}
-          className={`px-4 py-2 rounded-lg font-semibold transition-all ${theme.button} ${theme.buttonText} ${theme.buttonHover} disabled:opacity-75`}
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Basic security: Check the origin in a real application
+      // if (event.origin !== 'https://your-app-origin.com') return;
+
+      if (event.data && event.data.type === 'auth-token' && typeof event.data.token === 'string') {
+        setAccessToken(event.data.token);
+        setError(null);
+      } else if (event.data && event.data.type === 'auth-error') {
+        setError(event.data.message || 'Authentication error from parent window.');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Let the parent window know that the iframe is ready to receive messages.
+    window.parent.postMessage({ type: 'iframe-ready' }, '*');
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
+  // While waiting for the access token, we render a transparent container
+  // to prevent any visual flicker before the actual content is ready.
+  if (!accessToken) {
+    if (error) {
+      return (
+        <div 
+          className="flex items-center justify-center h-full p-4 rounded-2xl"
+          style={{
+            backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+          }}
         >
-          {auth.isGsiReady ? 'Sign in with Google' : 'Initializing...'}
-        </button>
-      </div>
-    );
+          <p className="text-red-500 text-center font-semibold">{error}</p>
+        </div>
+      );
+    }
+    return null; // Render nothing until token is received or an error occurs
   }
 
-  // Once authenticated, render the actual CheckboxFrame.
-  return <CheckboxFrame accessToken={auth.accessToken} />;
+  return <CheckboxFrame accessToken={accessToken} />;
 };
 
 
@@ -44,7 +65,7 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <CheckboxFrameApp />
+      <App />
     </ThemeProvider>
   </React.StrictMode>
 );

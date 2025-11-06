@@ -16,14 +16,16 @@ interface CalendarViewProps {
   hasSelectedCalendars: boolean;
   isLoading: boolean;
   showEndTime: boolean;
+  accessToken: string | null;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken }) => {
   const { theme } = useTheme();
 
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const [isDragging, setIsDragging] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const dragOffset = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -83,16 +85,27 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      if (event.source !== iframeRef.current?.contentWindow) {
+        return; // Ignore messages from other sources
+      }
+
       if (event.data.type === 'iframe-drag-start' && event.data.payload) {
         const { clientX, clientY } = event.data.payload;
         handleDragStart(clientX, clientY);
+      } else if (event.data.type === 'iframe-ready') {
+        if (iframeRef.current?.contentWindow && accessToken) {
+          iframeRef.current.contentWindow.postMessage(
+            { type: 'auth-token', token: accessToken },
+            '*' // Use a specific origin in production
+          );
+        }
       }
     };
     window.addEventListener('message', handleMessage);
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [handleDragStart]);
+  }, [handleDragStart, accessToken]);
 
   const today = new Date();
   const year = today.getFullYear();
@@ -192,6 +205,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         }}
       >
          <iframe
+          ref={iframeRef}
           src="/checkbox-frame.html"
           title="メンバー在席確認"
           className={`w-[26rem] h-[25rem] border-none transition-opacity duration-300 ${isDragging ? 'pointer-events-none opacity-75' : 'opacity-100'}`}
