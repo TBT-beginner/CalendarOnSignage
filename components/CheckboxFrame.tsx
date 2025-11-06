@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getCheckboxState, setCheckboxState } from '../services/storageService';
 import { CheckboxState } from '../types';
@@ -59,7 +58,11 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
       setState(validatedState);
     } catch (e) {
       console.error("Error fetching checkbox state:", e);
-      setError('スプレッドシートから状態を取得できませんでした。権限を確認してください。');
+      if (e instanceof Error) {
+        setError(`取得エラー: ${e.message}`);
+      } else {
+        setError('スプレッドシートから状態を取得できませんでした。');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +89,11 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
       setState(finalState);
     } catch (e) {
       console.error("Failed to save checkbox state:", e);
-      setError('状態の保存に失敗しました。');
+      if (e instanceof Error) {
+        setError(`保存エラー: ${e.message}`);
+      } else {
+        setError('状態の保存に失敗しました。');
+      }
       // On error, revert to the last known good state from the server.
       const currentState = await getCheckboxState(accessToken) || INITIAL_STATE;
       setState(currentState);

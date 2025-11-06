@@ -49,7 +49,7 @@ export const getCheckboxState = async (accessToken: string): Promise<CheckboxSta
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Failed to fetch from Google Sheets:', errorData);
-      throw new Error(`Google Sheets API Error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`[${response.status}] ${errorData.error?.message || response.statusText}`);
     }
 
     const data = await response.json();
@@ -86,7 +86,7 @@ export const setCheckboxState = async (state: CheckboxState, accessToken: string
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Failed to update Google Sheets:', errorData);
-      throw new Error(`Google Sheets API Error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`[${response.status}] ${errorData.error?.message || response.statusText}`);
     }
   } catch (error) {
     console.error('Error in setCheckboxState:', error);
