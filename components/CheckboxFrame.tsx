@@ -3,7 +3,7 @@ import { getCheckboxState, setCheckboxState } from '../services/storageService';
 import { CheckboxState } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
 
-const MEMBERS = ['Aさん', 'Bさん', 'Cさん', 'Dさん', 'Eさん', 'Fさん'];
+const MEMBERS = ['田中', '萩谷', '越川', '佐藤', '野中', '菅澤'];
 const INITIAL_STATE: CheckboxState = MEMBERS.reduce((acc, name) => ({ ...acc, [name]: false }), {});
 const POLLING_INTERVAL = 5000; // 5 seconds
 
