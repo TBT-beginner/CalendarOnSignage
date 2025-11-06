@@ -107,6 +107,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             サインアウト
           </button>
       </footer>
+      
+      <iframe
+        src={`/checkbox-frame.html?theme=${theme.name.toLowerCase()}`}
+        title="共有チェックボックス"
+        className="fixed bottom-5 left-5 w-[640px] h-[80px] border-none rounded-2xl shadow-2xl transition-all"
+        style={{ 
+          backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(31, 41, 55, 0.7)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+        }}
+      />
     </div>
   );
 };
