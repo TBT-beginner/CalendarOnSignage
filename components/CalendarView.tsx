@@ -15,10 +15,9 @@ interface CalendarViewProps {
   hasSelectedCalendars: boolean;
   isLoading: boolean;
   showEndTime: boolean;
-  isDemoMode: boolean;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, isDemoMode }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime }) => {
   const { theme } = useTheme();
 
   const today = new Date();
@@ -50,26 +49,24 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             </div>
             <div>
               <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText} ${theme.fontDisplay}`}>今日のスケジュール</h1>
-              <p className={theme.headerSubtext}>{isDemoMode ? 'サンプルデータ' : 'Googleカレンダーより'}</p>
+              <p className={theme.headerSubtext}>Googleカレンダーより</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            {!isDemoMode && (
-              <button
-                onClick={onOpenCalendarSelection}
-                className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton}`}
-                aria-label="表示カレンダーの選択"
-              >
-                <SettingsIcon className="w-6 h-6" />
-              </button>
-            )}
+            <button
+              onClick={onOpenCalendarSelection}
+              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton}`}
+              aria-label="表示カレンダーの選択"
+            >
+              <SettingsIcon className="w-6 h-6" />
+            </button>
           </div>
         </div>
         <Clock />
       </header>
       
-      { !hasSelectedCalendars && !isLoading && !isDemoMode ? (
+      { !hasSelectedCalendars && !isLoading ? (
         <div className="flex-grow flex items-center justify-center">
             <div 
               className={`text-center ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-8 max-w-lg`}
@@ -107,7 +104,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             onClick={onSignOut}
             className={`${theme.textMuted} hover:${theme.textPrimary} transition text-sm font-semibold`}
           >
-            {isDemoMode ? 'Googleアカウントに接続' : 'サインアウト'}
+            サインアウト
           </button>
       </footer>
     </div>

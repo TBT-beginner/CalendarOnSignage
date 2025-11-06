@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // Fix: Add types for Google Identity Services to resolve namespace errors.
 declare namespace google {
@@ -10,7 +10,7 @@ declare namespace google {
         error_description?: string;
       }
       interface TokenClient {
-        requestAccessToken: (overrideConfig?: { prompt?: string }) => void;
+        requestAccessToken: (overrideConfig?: object) => void;
       }
       interface TokenClientConfig {
         client_id: string;
@@ -49,8 +49,6 @@ export const useGoogleAuth = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isGsiReady, setIsGsiReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [needsReAuth, setNeedsReAuth] = useState(false); // New state
-  const isSilentRefresh = useRef(false); // To distinguish callbacks
 
   // Initialize the Google Sign-In client
   useEffect(() => {
@@ -72,26 +70,11 @@ export const useGoogleAuth = () => {
         scope: SCOPES,
         callback: (tokenResponse) => {
           if (tokenResponse.error) {
-            if (isSilentRefresh.current) {
-              // A silent refresh failed. This is not a critical error yet.
-              // It usually means the user needs to grant consent again.
-              console.warn('Silent token refresh failed:', tokenResponse.error_description);
-              setNeedsReAuth(true);
-              // We don't set a main error and don't log out here.
-              // The app will continue to run with stale data until re-auth.
-            } else {
-              // An interactive sign-in failed. This is a real error.
-              setError(tokenResponse.error_description || 'サインイン中にエラーが発生しました。');
-              setAccessToken(null);
-              setNeedsReAuth(false);
-            }
+            setError(tokenResponse.error_description || 'サインイン中にエラーが発生しました。');
+            setAccessToken(null);
           } else {
-            // Success on either silent or interactive sign-in
-            setError(null);
-            setNeedsReAuth(false);
             setAccessToken(tokenResponse.access_token);
           }
-          isSilentRefresh.current = false; // Reset flag after any callback
         },
       });
       setTokenClient(client);
@@ -100,21 +83,11 @@ export const useGoogleAuth = () => {
 
   const signIn = useCallback(() => {
     setError(null);
-    setNeedsReAuth(false);
     if (tokenClient) {
-      isSilentRefresh.current = false; // This is an interactive sign-in
       // Prompt the user to select a Google Account and grant access
-      tokenClient.requestAccessToken({});
+      tokenClient.requestAccessToken();
     } else {
         setError('サインインクライアントの準備ができていません。');
-    }
-  }, [tokenClient]);
-
-  const refreshToken = useCallback(() => {
-    if (tokenClient) {
-      isSilentRefresh.current = true; // This is a silent refresh attempt
-      // Attempt to get a token silently without prompting the user.
-      tokenClient.requestAccessToken({ prompt: 'none' });
     }
   }, [tokenClient]);
 
@@ -125,9 +98,7 @@ export const useGoogleAuth = () => {
       });
     }
     setAccessToken(null);
-    setNeedsReAuth(false);
-    setError(null);
   }, [accessToken]);
 
-  return { accessToken, signIn, signOut, isGsiReady, error, refreshToken, needsReAuth, setError };
+  return { accessToken, signIn, signOut, isGsiReady, error, clearError: () => setError(null) };
 };
