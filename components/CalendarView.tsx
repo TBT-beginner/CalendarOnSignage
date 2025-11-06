@@ -103,7 +103,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       { !hasSelectedCalendars && !isLoading ? (
         <div className="flex-grow flex items-center justify-center">
             <div 
-              className={`text-center ${theme.cardBg} ${theme.cardBorder} rounded-3xl p-8 max-w-lg`}
+              className={`text-center ${theme.cardBg} rounded-3xl p-8 max-w-lg shadow-lg`}
             >
                 <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4`}>カレンダーが選択されていません</h2>
                 <p className={`${theme.textSecondary} mb-6`}>
@@ -119,9 +119,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             </div>
         </div>
       ) : (
-        <main className="flex-grow flex flex-col md:flex-row gap-6 lg:gap-8 min-h-0">
+        <main className="flex-grow flex flex-col md:flex-row gap-2 min-h-0">
           {/* Left: Today's Schedule & Member Status */}
-          <div className="w-full md:w-3/5 flex flex-col gap-6 lg:gap-8">
+          <div className="w-full md:w-3/5 flex flex-col gap-2">
             <TimelineOverview events={todaysEvents} showEndTime={showEndTime} />
             <CheckboxFrame accessToken={accessToken} />
           </div>

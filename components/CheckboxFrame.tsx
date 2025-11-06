@@ -162,7 +162,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
   if (isLoading) {
     return (
       <div
-        className={`w-full flex items-center justify-center p-8 rounded-2xl shadow-lg ${theme.cardBg} ${theme.cardBorder}`}
+        className={`w-full flex items-center justify-center p-8 rounded-2xl shadow-lg ${theme.cardBg}`}
         style={{ minHeight: '10rem' }}
       >
         <Spinner className={`h-8 w-8 ${theme.textPrimary}`} />
@@ -172,7 +172,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
 
   return (
     <div
-      className={`w-full overflow-hidden rounded-2xl shadow-lg ${theme.cardBg} ${theme.cardBorder}`}
+      className={`w-full overflow-hidden rounded-2xl shadow-lg ${theme.cardBg}`}
     >
       <div className="p-4 relative">
         {isSaving && <Spinner className={`absolute h-5 w-5 ${theme.textPrimary} top-4 right-4`} />}
@@ -194,22 +194,22 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                 return (
                     <div 
                         key={name} 
-                        className={`flex flex-col rounded-lg shadow-md transition-all duration-200 overflow-hidden border ${theme.border} ${cardBg}`}
+                        className={`flex flex-col rounded-lg shadow-md transition-all duration-200 overflow-hidden ${cardBg}`}
                     >
                        <button
                             type="button"
                             onClick={() => handleStatusChange(name)}
-                            className={`w-full h-10 rounded-t-md font-bold text-base text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                            className={`w-full h-8 rounded-t-md font-bold text-base text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
                        >
                             <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
                             {name}
                        </button>
-                       <div className="p-1 h-16">
+                       <div className="p-1 h-14">
                          <textarea
                             value={status.comment}
                             onChange={(e) => handleCommentChange(name, e.target.value)}
                             placeholder="不在理由..."
-                            className={`w-full h-full p-1 rounded-md text-sm border-2 transition-opacity duration-300 focus:outline-none resize-none ${theme.border} ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            className={`w-full h-full p-1 rounded-md text-sm border-0 transition-opacity duration-300 focus:outline-none resize-none ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                             style={{ backgroundColor: 'transparent' }}
                             disabled={status.isPresent}
                          />
