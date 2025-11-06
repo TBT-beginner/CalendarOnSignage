@@ -229,7 +229,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                 })}
             </div>
 
-            <div className={`mt-3 transition-all duration-300 ${selectedForComment ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className={`mt-3 transition-all duration-300 h-24 ${selectedForComment ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                {selectedForComment && (
                  <div>
                     <label htmlFor="comment" className={`block text-sm font-bold mb-1 ${theme.textPrimary}`}>
