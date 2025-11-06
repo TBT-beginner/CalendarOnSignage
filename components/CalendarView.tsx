@@ -59,9 +59,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   
   return (
     <div className={`flex flex-col h-screen p-4 sm:p-6 md:p-8 ${theme.fontDisplay}`}>
-      <header className={`flex flex-col md:flex-row items-center justify-between gap-4 mb-4 flex-shrink-0`}>
-        {/* Left Side Group: Title & Controls */}
-        <div className="flex items-center gap-4">
+      <header className={`flex flex-col md:flex-row items-center gap-4 mb-4 flex-shrink-0`}>
+        {/* Left Side: Title & Controls */}
+        <div className="flex items-center gap-4 md:flex-1">
           <div className="flex items-center gap-4 flex-shrink-0">
             <div 
               className={`rounded-2xl p-3 ${theme.buttonBorder}`}
@@ -85,12 +85,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           </div>
         </div>
 
-        {/* Right Side Group: Clock & Date */}
-        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-8">
+        {/* Center: Clock */}
+        <div className="md:flex-1">
             <Clock />
-            <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext} -mt-2 md:mt-0`}>
-                {formatDate(currentDate)}
-            </div>
+        </div>
+        
+        {/* Right Side: Date */}
+        <div className="md:flex-1 flex justify-center md:justify-end">
+          <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext} -mt-2 md:mt-0`}>
+              {formatDate(currentDate)}
+          </div>
         </div>
       </header>
       
