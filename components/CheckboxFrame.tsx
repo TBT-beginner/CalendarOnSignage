@@ -175,10 +175,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
       className={`w-full overflow-hidden rounded-2xl shadow-lg ${theme.cardBg} ${theme.cardBorder}`}
     >
       <div className="p-4 md:p-6 relative">
-        <div className="flex justify-between items-center mb-4">
-            <h3 className={`text-xl font-bold ${theme.textPrimary} ${theme.fontDisplay}`}>メンバー在席状況</h3>
-            {isSaving && <Spinner className={`h-5 w-5 ${theme.textPrimary}`} />}
-        </div>
+        {isSaving && <Spinner className={`absolute h-5 w-5 ${theme.textPrimary} top-4 right-4 md:top-6 md:right-6`} />}
         {error ? (
           renderError()
         ) : (
