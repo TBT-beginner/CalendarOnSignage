@@ -32,7 +32,7 @@ const Clock: React.FC = () => {
   };
 
   return (
-    <div className="w-full sm:w-auto text-center sm:text-right">
+    <div className="w-full sm:w-auto text-center">
       <div className={`font-mono-bold text-4xl sm:text-5xl md:text-7xl tracking-tighter ${theme.headerText}`}>
         {currentTime.toLocaleTimeString('ja-JP', timeOptions)}
       </div>

@@ -199,7 +199,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                        <button
                             type="button"
                             onClick={() => handleStatusChange(name)}
-                            className={`w-full h-12 rounded-t-md font-bold text-base text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                            className={`w-full h-10 rounded-t-md font-bold text-base text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
                        >
                             <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
                             {name}
