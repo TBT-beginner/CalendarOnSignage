@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getCheckboxState, setCheckboxState, SPREADSHEET_ID } from '../services/storageService';
-import { CheckboxState, MemberStatus } from '../types';
+import { CheckboxState } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
 
 const MEMBERS = ['田中', '萩谷', '越川', '佐藤', '野中', '菅澤'];
@@ -20,12 +20,6 @@ interface CheckboxFrameProps {
   accessToken: string;
 }
 
-const CommentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
-    <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 000 1.5h11.5a.75.75 0 000-1.5H4.25zm0 4a.75.75 0 000 1.5h11.5a.75.75 0 000-1.5H4.25zM4.25 13.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5H4.25z" clipRule="evenodd" />
-  </svg>
-);
-
 const Spinner: React.FC<{className?: string}> = ({ className }) => (
     <svg className={`animate-spin ${className}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -41,8 +35,6 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [updatedFromRemote, setUpdatedFromRemote] = useState<Set<string>>(new Set());
-  const [selectedForComment, setSelectedForComment] = useState<string | null>(null);
-  const [hoveredMember, setHoveredMember] = useState<string | null>(null);
   
   const stateRef = useRef(state);
   const debounceTimerRef = useRef<number | null>(null);
@@ -131,23 +123,14 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
       }
     };
     setState(newState);
-
-    if (!newState[name].isPresent) {
-        setSelectedForComment(name);
-    } else if (selectedForComment === name) {
-        setSelectedForComment(null);
-    }
-
     saveState(newState);
   };
 
-  const handleCommentChange = (comment: string) => {
-    if (!selectedForComment) return;
-
+  const handleCommentChange = (name: string, comment: string) => {
     const newState = {
         ...state,
-        [selectedForComment]: {
-            ...state[selectedForComment],
+        [name]: {
+            ...state[name],
             comment: comment
         }
     };
@@ -162,11 +145,6 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
     }, SAVE_DEBOUNCE_MS);
   };
 
-  const currentComment = useMemo(() => {
-    return selectedForComment ? state[selectedForComment]?.comment ?? '' : '';
-  }, [selectedForComment, state]);
-
-
   const renderError = () => (
      <div className={`p-4 font-semibold text-sm text-center ${theme.name === 'Light' ? 'text-red-600' : 'text-red-400'}`}>
         <p className={`font-bold text-base ${theme.name === 'Light' ? 'text-red-700' : 'text-red-300'}`}>スプレッドシートエラー</p>
@@ -180,6 +158,22 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
         </p>
     </div>
   );
+  
+  if (isLoading) {
+    return (
+      <div
+        className="transition-all overflow-hidden rounded-2xl shadow-2xl flex items-center justify-center p-8 w-[26rem]"
+        style={{
+          backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          minHeight: '10rem',
+        }}
+      >
+        <Spinner className={`h-8 w-8 ${theme.textPrimary}`} />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -190,62 +184,49 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
         WebkitBackdropFilter: 'blur(16px)',
       }}
     >
-      <div className={`p-4 transition-opacity duration-300 relative ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+      <div className="p-4 relative">
         {isSaving && <Spinner className={`absolute top-3 right-3 h-5 w-5 ${theme.textPrimary}`} />}
         {error ? (
           renderError()
         ) : (
-          <div>
-            <div className="grid grid-cols-3 gap-3">
-                {MEMBERS.map((name) => {
-                    const status = state[name];
-                    const isUpdated = updatedFromRemote.has(name);
-                    const ringColorClass = theme.accentText.replace('text-', 'ring-');
-                    
-                    const plateBgColor = status.isPresent
-                        ? 'bg-emerald-500 hover:bg-emerald-600'
-                        : 'bg-gray-500 hover:bg-gray-600';
+          <div className="grid grid-cols-3 gap-4">
+            {MEMBERS.map((name) => {
+                const status = state[name];
+                const isUpdated = updatedFromRemote.has(name);
+                const ringColorClass = theme.accentText.replace('text-', 'ring-');
+                
+                const plateBgColor = status.isPresent
+                    ? 'bg-emerald-500 hover:bg-emerald-600'
+                    : 'bg-gray-500 hover:bg-gray-600';
+                
+                const cardBg = theme.name === 'Light' ? 'bg-white/50' : 'bg-gray-800/50';
 
-                    return (
-                        <div key={name} className="relative" onMouseEnter={() => setHoveredMember(name)} onMouseLeave={() => setHoveredMember(null)}>
-                           <button
-                                type="button"
-                                onClick={() => handleStatusChange(name)}
-                                className={`w-full h-16 rounded-lg font-bold text-lg text-white transition-all duration-200 relative shadow-md transform hover:scale-105 focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
-                           >
-                                <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
-                                {name}
-                                {!status.isPresent && status.comment && (
-                                    <CommentIcon className="absolute bottom-1.5 right-1.5 h-4 w-4 text-white/70" />
-                                )}
-                           </button>
-                           {hoveredMember === name && !status.isPresent && status.comment && (
-                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md py-1.5 px-3 z-10 opacity-90 transition-opacity shadow-lg">
-                                   {status.comment}
-                               </div>
-                           )}
-                        </div>
-                    );
-                })}
-            </div>
-
-            <div className={`mt-3 h-28 transition-opacity duration-300 ${selectedForComment ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-               {selectedForComment && (
-                 <div className="h-full flex flex-col">
-                    <label htmlFor="comment" className={`block text-sm font-bold mb-1 flex-shrink-0 ${theme.textPrimary}`}>
-                       {selectedForComment}さんの不在理由:
-                    </label>
-                    <textarea
-                        id="comment"
-                        value={currentComment}
-                        onChange={(e) => handleCommentChange(e.target.value)}
-                        placeholder="例: 外出 (15時まで)"
-                        className={`w-full p-2 rounded-md text-sm border-2 transition-colors focus:outline-none resize-none flex-grow ${theme.cardBorder} ${theme.textPrimary}`}
-                        style={{ backgroundColor: 'transparent' }}
-                    />
-                 </div>
-               )}
-            </div>
+                return (
+                    <div 
+                        key={name} 
+                        className={`flex flex-col rounded-lg shadow-md transition-all duration-200 overflow-hidden border ${theme.cardBorder} ${cardBg}`}
+                    >
+                       <button
+                            type="button"
+                            onClick={() => handleStatusChange(name)}
+                            className={`w-full h-16 rounded-t-md font-bold text-lg text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                       >
+                            <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
+                            {name}
+                       </button>
+                       <div className="p-2 h-24">
+                         <textarea
+                            value={status.comment}
+                            onChange={(e) => handleCommentChange(name, e.target.value)}
+                            placeholder="不在理由..."
+                            className={`w-full h-full p-1.5 rounded-md text-sm border-2 transition-opacity duration-300 focus:outline-none resize-none ${theme.cardBorder} ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            style={{ backgroundColor: 'transparent' }}
+                            disabled={status.isPresent}
+                         />
+                       </div>
+                    </div>
+                );
+            })}
           </div>
         )}
       </div>
