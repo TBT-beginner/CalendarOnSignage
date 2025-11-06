@@ -162,7 +162,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
   if (isLoading) {
     return (
       <div
-        className={`w-full flex items-center justify-center p-8 rounded-2xl shadow-lg ${theme.cardBg}`}
+        className={`w-full flex items-center justify-center p-8 rounded-2xl ${theme.cardBg}`}
         style={{ minHeight: '10rem' }}
       >
         <Spinner className={`h-8 w-8 ${theme.textPrimary}`} />
@@ -172,7 +172,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
 
   return (
     <div
-      className={`w-full overflow-hidden rounded-2xl shadow-lg ${theme.cardBg}`}
+      className={`w-full overflow-hidden rounded-2xl ${theme.cardBg}`}
     >
       <div className="p-4 relative">
         {isSaving && <Spinner className={`absolute h-5 w-5 ${theme.textPrimary} top-4 right-4`} />}
@@ -194,7 +194,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                 return (
                     <div 
                         key={name} 
-                        className={`flex flex-col rounded-lg shadow-md transition-all duration-200 overflow-hidden ${cardBg}`}
+                        className={`flex flex-col rounded-lg transition-all duration-200 overflow-hidden ${cardBg}`}
                     >
                        <button
                             type="button"

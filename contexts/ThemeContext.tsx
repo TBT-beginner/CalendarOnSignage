@@ -44,7 +44,7 @@ const lightTheme: Theme = {
   selectionBg: 'bg-indigo-100',
   border: 'border-gray-300', // ボーダーの色を柔らかく
   headerBorder: 'border-b-2 border-gray-300', // ヘッダーボーダーも同様
-  cardBorder: 'border border-gray-300', // 枠線を調整
+  cardBorder: '', // 枠線を削除
   buttonBorder: 'border-2 border-gray-900',
   checkboxShape: 'rounded-sm',
   fontDisplay: 'font-display',
@@ -71,7 +71,7 @@ const darkTheme: Theme = {
   selectionBg: 'bg-indigo-500/20',
   border: 'border-gray-700', // ボーダーの色を柔らかく
   headerBorder: 'border-b-2 border-gray-700',
-  cardBorder: 'border border-gray-700', // 枠線を調整
+  cardBorder: '', // 枠線を削除
   buttonBorder: 'border-2 border-white',
   checkboxShape: 'rounded-sm',
   fontDisplay: 'font-display',

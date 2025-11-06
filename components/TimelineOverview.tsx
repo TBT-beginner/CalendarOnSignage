@@ -66,7 +66,7 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, showEndTime
   if (events.length === 0) {
     return (
       <div 
-        className={`${theme.cardBg} rounded-2xl p-6 flex flex-col h-full shadow-lg`}
+        className={`${theme.cardBg} rounded-2xl p-6 flex flex-col flex-grow`}
       >
         <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b-2 ${theme.border} pb-3 flex-shrink-0`}>
           今日一日の予定
@@ -85,12 +85,12 @@ const TimelineOverview: React.FC<TimelineOverviewProps> = ({ events, showEndTime
 
   return (
     <div 
-      className={`${theme.cardBg} rounded-2xl p-6 flex flex-col h-full shadow-lg`}
+      className={`${theme.cardBg} rounded-2xl p-6 flex flex-col flex-grow min-h-0`}
     >
       <h3 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b-2 ${theme.border} pb-3 flex-shrink-0`}>
         今日一日の予定
       </h3>
-      <div className="flex-grow">
+      <div className="flex-grow overflow-y-auto custom-scrollbar pr-2 -mr-2">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
             <div>
               {leftColumnEvents.map((event, index) => {
