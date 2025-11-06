@@ -117,9 +117,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             </div>
         </div>
       ) : (
-        <main className="flex-grow flex flex-col md:flex-row gap-2 min-h-0">
+        <main className="flex-grow flex flex-col md:flex-row gap-4 min-h-0 overflow-y-auto md:overflow-hidden md:gap-2">
           {/* Left: Today's Schedule & Member Status */}
-          <div className="w-full md:w-3/5 flex flex-col gap-2 min-h-0">
+          <div className="w-full md:w-3/5 flex flex-col gap-4 md:gap-2 md:min-h-0">
             <TimelineOverview events={todaysEvents} showEndTime={showEndTime} />
             <div className="flex-shrink-0">
               <CheckboxFrame accessToken={accessToken} />
