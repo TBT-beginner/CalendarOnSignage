@@ -179,7 +179,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
         {error ? (
           renderError()
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
             {MEMBERS.map((name) => {
                 const status = state[name];
                 const isUpdated = updatedFromRemote.has(name);

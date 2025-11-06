@@ -59,42 +59,36 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   
   return (
     <div className={`flex flex-col h-screen p-4 sm:p-6 md:p-8 ${theme.fontDisplay}`}>
-      <header className={`flex items-center gap-4 mb-4 flex-shrink-0`}>
-        {/* Left Side */}
-        <div className="flex-1 flex justify-start">
-            <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
-            <div className="flex items-center gap-4 flex-shrink-0">
-                <div 
-                className={`rounded-2xl p-3 ${theme.buttonBorder}`}
-                >
-                <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
-                </div>
-                <div>
-                <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText} ${theme.fontDisplay}`}>今日のスケジュール</h1>
-                <p className={theme.headerSubtext}>Googleカレンダーより</p>
-                </div>
+      <header className={`flex flex-col md:flex-row items-center justify-between gap-4 mb-4 flex-shrink-0`}>
+        {/* Left Side Group: Title & Controls */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <div 
+              className={`rounded-2xl p-3 ${theme.buttonBorder}`}
+            >
+              <CalendarIcon className={`w-8 h-8 ${theme.textPrimary}`} />
             </div>
-            <div className="flex items-center gap-2">
-                <ThemeToggle />
-                <button
-                onClick={onOpenCalendarSelection}
-                className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton}`}
-                aria-label="表示カレンダーの選択"
-                >
-                <SettingsIcon className="w-6 h-6" />
-                </button>
+            <div>
+              <h1 className={`text-2xl sm:text-3xl font-bold ${theme.headerText} ${theme.fontDisplay}`}>今日のスケジュール</h1>
+              <p className={theme.headerSubtext}>Googleカレンダーより</p>
             </div>
-            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={onOpenCalendarSelection}
+              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton}`}
+              aria-label="表示カレンダーの選択"
+            >
+              <SettingsIcon className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
-        {/* Center: Clock */}
-        <div className="flex-shrink-0">
+        {/* Right Side Group: Clock & Date */}
+        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-8">
             <Clock />
-        </div>
-
-        {/* Right Side: Date */}
-        <div className="flex-1 flex justify-end items-center">
-             <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext}`}>
+            <div className={`text-lg sm:text-xl md:text-3xl ${theme.headerSubtext} -mt-2 md:mt-0`}>
                 {formatDate(currentDate)}
             </div>
         </div>
