@@ -199,25 +199,35 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
         {error ? (
           renderError()
         ) : (
-          <div className="flex items-center justify-around w-full gap-x-4">
+          <div className="flex items-start justify-around w-full gap-x-4">
             {MEMBERS.map((name) => {
                 const isUpdated = updatedFromRemote.has(name);
                 const ringColorClass = theme.accentText.replace('text-', 'ring-');
-                const checkboxClasses = `h-5 w-5 border-2 rounded-sm focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-300 ${theme.border} ${theme.accentBg} focus:ring-current ${isUpdated ? `ring-2 ${ringColorClass}` : ''}`;
+                const isPresent = state[name] || false;
+                
+                const buttonBgColor = isPresent
+                    ? theme.accentBg
+                    : (theme.name === 'Light' ? 'bg-gray-300' : 'bg-gray-600');
+                
+                const buttonTextColor = isPresent
+                    ? 'text-white'
+                    : theme.textPrimary;
 
                 return (
-                  <label key={name} className="flex items-center cursor-pointer space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={state[name] || false}
-                      onChange={() => handleChange(name)}
-                      className={checkboxClasses}
-                      disabled={isSaving}
-                    />
-                    <span className={`font-bold text-lg ${theme.textPrimary}`}>
-                      {name}
-                    </span>
-                  </label>
+                    <div key={name} className="text-center">
+                        <span className={`block font-bold text-lg mb-2 ${theme.textPrimary}`}>
+                            {name}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => handleChange(name)}
+                            disabled={isSaving}
+                            className={`w-24 h-12 rounded-lg font-bold text-2xl transition-all duration-300 relative shadow-md hover:shadow-lg focus:outline-none ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'} ${buttonBgColor} ${buttonTextColor} disabled:opacity-70 disabled:cursor-wait`}
+                            aria-pressed={isPresent}
+                        >
+                            {isPresent ? '在' : '不在'}
+                        </button>
+                    </div>
                 );
             })}
           </div>
