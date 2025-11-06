@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
@@ -17,7 +16,7 @@ interface CalendarViewProps {
   hasSelectedCalendars: boolean;
   isLoading: boolean;
   showEndTime: boolean;
-  accessToken: string | null;
+  accessToken: string;
 }
 
 const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken }) => {
@@ -82,20 +81,22 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', handleDragEnd);
   }, [position, handleDragMove, handleDragEnd, handleTouchMove]);
-  
-  const handleInteractionStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    // Don't start drag if clicking on interactive elements
-    if (target.closest('button, textarea, a, input')) {
-        return;
+
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
     }
-    // Prevent default behavior for mouse events to stop text selection, etc.
-    if (e.type === 'mousedown') {
-      e.preventDefault();
+    e.preventDefault();
+    handleDragStart(e.clientX, e.clientY);
+  }, [handleDragStart]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
     }
-    const point = 'touches' in e ? e.touches[0] : e;
-    handleDragStart(point.clientX, point.clientY);
-  };
+    const touch = e.touches[0];
+    handleDragStart(touch.clientX, touch.clientY);
+  }, [handleDragStart]);
 
   const today = new Date();
   const year = today.getFullYear();
@@ -187,16 +188,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       
       <div
         ref={frameRef}
-        className="fixed z-20 cursor-grab"
+        className={`fixed w-auto transition-shadow duration-200 z-20 ${isDragging ? 'shadow-2xl cursor-grabbing' : 'cursor-grab'}`}
         style={{
           right: `${position.x}px`,
           bottom: `${position.y}px`,
           userSelect: isDragging ? 'none' : 'auto',
+          touchAction: 'none',
         }}
-        onMouseDown={handleInteractionStart}
-        onTouchStart={handleInteractionStart}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
       >
-        {accessToken && <CheckboxFrame accessToken={accessToken} />}
+        <CheckboxFrame accessToken={accessToken} />
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getCheckboxState, setCheckboxState, SPREADSHEET_ID } from '../services/storageService';
 import { CheckboxState } from '../types';
@@ -178,7 +177,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
 
   return (
     <div
-      className="transition-all overflow-hidden rounded-2xl shadow-2xl w-[26rem]"
+      className="transition-all overflow-hidden rounded-2xl shadow-2xl"
       style={{
         backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
         backdropFilter: 'blur(16px)',
