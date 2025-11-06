@@ -7,7 +7,6 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SettingsIcon from './icons/SettingsIcon';
 import WeeklyView from './WeeklyView';
-import CheckboxFrame from './CheckboxFrame';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
@@ -110,14 +109,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
       </footer>
       
       <div
-        className="fixed bottom-5 left-5 w-[640px] h-[80px] rounded-2xl shadow-2xl transition-all"
+        className="fixed bottom-5 left-5 w-[640px] h-[80px] rounded-2xl shadow-2xl transition-all overflow-hidden"
         style={{ 
           backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(31, 41, 55, 0.7)',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
         }}
       >
-        <CheckboxFrame />
+        <iframe
+          src="/checkbox-frame.html"
+          title="Shared Checkbox"
+          className="w-full h-full"
+          style={{ border: 'none' }}
+        />
       </div>
     </div>
   );
