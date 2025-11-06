@@ -1,7 +1,7 @@
 import { CheckboxState } from '../types';
 
 // スプレッドシートの情報
-const SPREADSHEET_ID = '12FsH16GpVQ7sWzlMPnoDS__FS1aIg2lk-3P4ppwTeI8';
+export const SPREADSHEET_ID = '12FsH16GpVQ7sWzlMPnoDS__FS1aIg2lk-3P4ppwTeI8';
 const SHEET_RANGE = 'A2:F2'; // データを読み書きする範囲 (2行目のA列からF列)
 
 // ヘッダーのメンバー順 (スプレッドシートの列順と一致させる必要があります)
