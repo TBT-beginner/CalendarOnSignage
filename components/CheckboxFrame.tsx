@@ -162,13 +162,8 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
   if (isLoading) {
     return (
       <div
-        className="transition-all overflow-hidden rounded-2xl shadow-2xl flex items-center justify-center p-8 w-[26rem]"
-        style={{
-          backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          minHeight: '10rem',
-        }}
+        className={`w-full flex items-center justify-center p-8 rounded-2xl shadow-lg ${theme.cardBg} ${theme.cardBorder}`}
+        style={{ minHeight: '10rem' }}
       >
         <Spinner className={`h-8 w-8 ${theme.textPrimary}`} />
       </div>
@@ -177,19 +172,17 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
 
   return (
     <div
-      className="transition-all overflow-hidden rounded-2xl shadow-2xl"
-      style={{
-        backgroundColor: theme.name === 'Light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-      }}
+      className={`w-full overflow-hidden rounded-2xl shadow-lg ${theme.cardBg} ${theme.cardBorder}`}
     >
-      <div className="p-4 relative">
-        {isSaving && <Spinner className={`absolute top-3 right-3 h-5 w-5 ${theme.textPrimary}`} />}
+      <div className="p-4 md:p-6 relative">
+        <div className="flex justify-between items-center mb-4">
+            <h3 className={`text-xl font-bold ${theme.textPrimary} ${theme.fontDisplay}`}>メンバー在席状況</h3>
+            {isSaving && <Spinner className={`h-5 w-5 ${theme.textPrimary}`} />}
+        </div>
         {error ? (
           renderError()
         ) : (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
             {MEMBERS.map((name) => {
                 const status = state[name];
                 const isUpdated = updatedFromRemote.has(name);
@@ -199,27 +192,27 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
                     ? 'bg-emerald-500 hover:bg-emerald-600'
                     : 'bg-gray-500 hover:bg-gray-600';
                 
-                const cardBg = theme.name === 'Light' ? 'bg-white/50' : 'bg-gray-800/50';
+                const cardBg = theme.name === 'Light' ? 'bg-gray-100/80' : 'bg-gray-800/80';
 
                 return (
                     <div 
                         key={name} 
-                        className={`flex flex-col rounded-lg shadow-md transition-all duration-200 overflow-hidden border ${theme.cardBorder} ${cardBg}`}
+                        className={`flex flex-col rounded-lg shadow-md transition-all duration-200 overflow-hidden border ${theme.border} ${cardBg}`}
                     >
                        <button
                             type="button"
                             onClick={() => handleStatusChange(name)}
-                            className={`w-full h-16 rounded-t-md font-bold text-lg text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                            className={`w-full h-14 md:h-16 rounded-t-md font-bold text-base md:text-lg text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
                        >
                             <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
                             {name}
                        </button>
-                       <div className="p-2 h-24">
+                       <div className="p-1.5 h-20">
                          <textarea
                             value={status.comment}
                             onChange={(e) => handleCommentChange(name, e.target.value)}
                             placeholder="不在理由..."
-                            className={`w-full h-full p-1.5 rounded-md text-sm border-2 transition-opacity duration-300 focus:outline-none resize-none ${theme.cardBorder} ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            className={`w-full h-full p-1.5 rounded-md text-sm border-2 transition-opacity duration-300 focus:outline-none resize-none ${theme.border} ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                             style={{ backgroundColor: 'transparent' }}
                             disabled={status.isPresent}
                          />
