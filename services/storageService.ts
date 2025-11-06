@@ -1,4 +1,11 @@
+
 import { CheckboxState } from '../types';
+
+// このサービスは、アプリケーションの状態を永続化するためのものです。
+// AI Studio環境で実行されている場合、`window.aistudio.get` および `window.aistudio.set` APIを利用します。
+// これにより、プロジェクトに紐付いた共有ストレージにデータが保存され、
+// 異なるデバイスやブラウザセッション間での状態の同期が実現されます。
+// ローカル環境など、AI Studio APIが利用できない場合は、フォールバックとしてブラウザのlocalStorageを使用します。
 
 // Define the types for AI Studio's persistence API to avoid TypeScript errors.
 declare global {
