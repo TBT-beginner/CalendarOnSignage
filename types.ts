@@ -12,6 +12,11 @@ export interface CalendarListEntry {
   backgroundColor: string;
 }
 
+export interface MemberStatus {
+  isPresent: boolean;
+  comment: string;
+}
+
 export interface CheckboxState {
-  [name: string]: boolean;
+  [name: string]: MemberStatus;
 }
