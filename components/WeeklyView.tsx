@@ -38,7 +38,10 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading, showEndTime 
 
   useEffect(() => {
     const checkHeight = () => {
-      if (containerRef.current && contentRef.current) {
+      // mdブレークポイント (768px) 以上のPCビューでのみアニメーションを有効にする
+      const isDesktop = window.innerWidth >= 768;
+
+      if (containerRef.current && contentRef.current && isDesktop) {
         const containerHeight = containerRef.current.offsetHeight;
         const contentHeight = contentRef.current.offsetHeight;
         setShouldAnimate(contentHeight > containerHeight);
@@ -89,12 +92,16 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ events, isLoading, showEndTime 
 
   return (
     <div
-      className={`w-full h-full flex flex-col ${theme.cardBg} rounded-2xl p-6 min-h-0`}
+      className={`w-full md:h-full flex flex-col ${theme.cardBg} rounded-2xl p-6 md:min-h-0`}
     >
       <h2 className={`text-2xl font-bold ${theme.textPrimary} ${theme.fontDisplay} mb-4 border-b-2 ${theme.border} pb-3 flex-shrink-0`}>
         今週の予定
       </h2>
-      <div ref={containerRef} className="flex-grow overflow-hidden relative" style={autoScrollContainerStyle}>
+      <div 
+        ref={containerRef} 
+        className="flex-grow overflow-y-auto md:overflow-hidden md:relative custom-scrollbar" 
+        style={shouldAnimate ? autoScrollContainerStyle : {}}
+      >
         {sortedDates.length > 0 ? (
           <div
             className={shouldAnimate ? 'absolute top-0 left-0 w-full' : ''}
