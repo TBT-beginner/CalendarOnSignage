@@ -27,6 +27,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
   const frameRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const dragOffset = useRef({ x: 0, y: 0 });
+  const [iframeReady, setIframeReady] = useState(false);
 
   useEffect(() => {
     try {
@@ -83,6 +84,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
     window.addEventListener('touchend', handleDragEnd);
   }, [position, handleDragMove, handleDragEnd, handleTouchMove]);
   
+  // Listen for messages from the iframe (drag start, ready signal)
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.source !== iframeRef.current?.contentWindow) {
@@ -93,19 +95,24 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
         const { clientX, clientY } = event.data.payload;
         handleDragStart(clientX, clientY);
       } else if (event.data.type === 'iframe-ready') {
-        if (iframeRef.current?.contentWindow && accessToken) {
-          iframeRef.current.contentWindow.postMessage(
-            { type: 'auth-token', token: accessToken },
-            '*' // Use a specific origin in production
-          );
-        }
+        setIframeReady(true);
       }
     };
     window.addEventListener('message', handleMessage);
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [handleDragStart, accessToken]);
+  }, [handleDragStart]);
+
+  // Send the auth token to the iframe when both the iframe is ready and the token is available
+  useEffect(() => {
+    if (iframeReady && accessToken && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        { type: 'auth-token', token: accessToken },
+        '*' // Use a specific origin in production
+      );
+    }
+  }, [iframeReady, accessToken]);
 
   const today = new Date();
   const year = today.getFullYear();
