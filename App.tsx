@@ -18,9 +18,9 @@ function App() {
   const [showReAuthModal, setShowReAuthModal] = useState(false);
   const [showEndTime, setShowEndTime] = useState(true);
   
-  // New state for Demo Mode
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isLoadingDemo, setIsLoadingDemo] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const auth = useGoogleAuth();
 
@@ -33,16 +33,27 @@ function App() {
 
   useEffect(() => {
     try {
+      // アプリ起動時にキャッシュを確認
+      const cachedEventsStr = localStorage.getItem('cachedCalendarEvents');
+      const lastFetchTimestampStr = localStorage.getItem('lastFetchTimestamp');
+      const isDemoActive = localStorage.getItem('isDemoModeActive') === 'true';
+
+      if (cachedEventsStr && lastFetchTimestampStr) {
+        const now = new Date().getTime();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+        if (now - parseInt(lastFetchTimestampStr, 10) < twentyFourHours) {
+          console.log("24時間以内のキャッシュデータを読み込みます。");
+          setEvents(JSON.parse(cachedEventsStr));
+          if (isDemoActive) {
+            setIsDemoMode(true);
+          }
+          setIsLoading(false);
+        }
+      }
+
       const savedIds = localStorage.getItem('selectedCalendarIds');
       if (savedIds) {
-        const parsedIds = JSON.parse(savedIds);
-        if (Array.isArray(parsedIds)) {
-          setSelectedCalendarIds(parsedIds);
-        } else {
-          setSelectedCalendarIds([]);
-        }
-      } else {
-        setSelectedCalendarIds([]);
+        setSelectedCalendarIds(JSON.parse(savedIds));
       }
 
       const savedShowEndTime = localStorage.getItem('showEndTime');
@@ -53,16 +64,21 @@ function App() {
     } catch (error) {
       console.error("Failed to parse settings from localStorage", error);
       setSelectedCalendarIds([]);
+    } finally {
+      setIsInitialLoad(false);
     }
-  }, []);
+  }, []); // このEffectはマウント時に一度だけ実行
 
   const fetchEvents = useCallback(async () => {
-    if (isDemoMode) return; // Don't fetch from Google in demo mode
+    if (isDemoMode) return;
     if (auth.accessToken && selectedCalendarIds.length > 0) {
       setIsLoading(true);
       try {
         const fetchedEvents = await fetchGoogleCalendarEvents(auth.accessToken, selectedCalendarIds);
         setEvents(fetchedEvents);
+        localStorage.setItem('cachedCalendarEvents', JSON.stringify(fetchedEvents));
+        localStorage.setItem('lastFetchTimestamp', new Date().getTime().toString());
+        localStorage.removeItem('isDemoModeActive');
       } catch (e) {
         if (e instanceof Error && e.message.includes('認証')) {
           console.log('Authentication error detected, attempting refresh...');
@@ -74,27 +90,17 @@ function App() {
         setIsLoading(false);
       }
     } else {
-      setEvents([]);
+      if (auth.accessToken) { // サインイン済みだがカレンダー未選択の場合
+        setEvents([]);
+      }
       setIsLoading(false);
     }
   }, [auth.accessToken, selectedCalendarIds, auth.refreshToken, isDemoMode]);
 
   useEffect(() => {
+    if (isInitialLoad) return; // 起動時のキャッシュ読み込み処理と競合させない
     fetchEvents();
-  }, [fetchEvents]);
-
-  // Automatically refresh events every 15 minutes
-  useEffect(() => {
-    if (isDemoMode || !auth.accessToken || selectedCalendarIds.length === 0) {
-      return; // Don't start the timer in demo mode, or if not logged in, or no calendars are selected
-    }
-
-    const intervalId = setInterval(() => {
-      fetchEvents();
-    }, 15 * 60 * 1000); // 15 minutes
-
-    return () => clearInterval(intervalId);
-  }, [auth.accessToken, selectedCalendarIds, fetchEvents, isDemoMode]);
+  }, [fetchEvents, isInitialLoad]);
 
   const handleStartDemo = useCallback(async () => {
     setIsLoadingDemo(true);
@@ -103,6 +109,9 @@ function App() {
       const demoEvents = await generateSampleCalendarEvents();
       setEvents(demoEvents);
       setIsDemoMode(true);
+      localStorage.setItem('cachedCalendarEvents', JSON.stringify(demoEvents));
+      localStorage.setItem('lastFetchTimestamp', new Date().getTime().toString());
+      localStorage.setItem('isDemoModeActive', 'true');
     } catch (error) {
       console.error("Failed to start demo:", error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -112,17 +121,25 @@ function App() {
     }
   }, [auth]);
 
+  const clearCache = () => {
+    localStorage.removeItem('cachedCalendarEvents');
+    localStorage.removeItem('lastFetchTimestamp');
+    localStorage.removeItem('isDemoModeActive');
+  }
+
   const handleSignOut = () => {
     auth.signOut();
     setEvents([]);
     setSelectedCalendarIds([]);
     localStorage.removeItem('selectedCalendarIds');
+    clearCache();
   };
   
   const handleExitDemo = () => {
     setIsDemoMode(false);
     setEvents([]);
     auth.setError(null);
+    clearCache();
   };
 
   const onSignOutOrExitDemo = isDemoMode ? handleExitDemo : handleSignOut;
