@@ -150,6 +150,7 @@ function App() {
             isLoading={isLoading}
             showEndTime={showEndTime}
             accessToken={auth.accessToken}
+            onAuthError={auth.signIn}
           />
           <CalendarSelectionModal
             isOpen={isCalendarModalOpen}

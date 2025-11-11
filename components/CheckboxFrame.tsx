@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getCheckboxState, setCheckboxState, SPREADSHEET_ID } from '../services/storageService';
 import { CheckboxState } from '../types';
@@ -18,6 +19,7 @@ const SAVE_DEBOUNCE_MS = 1000;
 
 interface CheckboxFrameProps {
   accessToken: string;
+  onAuthError?: () => void;
 }
 
 const Spinner: React.FC<{className?: string}> = ({ className }) => (
@@ -28,7 +30,7 @@ const Spinner: React.FC<{className?: string}> = ({ className }) => (
 );
 
 
-const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
+const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken, onAuthError }) => {
   const { theme } = useTheme();
   const [state, setState] = useState<CheckboxState>(createInitialState());
   const [isLoading, setIsLoading] = useState(true);
@@ -81,12 +83,18 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
       setState(validatedState);
     } catch (e) {
       console.error("Error fetching state:", e);
-      if (e instanceof Error) setError(`取得エラー: ${e.message}`);
-      else setError('スプレッドシートから状態を取得できませんでした。');
+      if (e instanceof Error) {
+        setError(`取得エラー: ${e.message}`);
+        if ((e.message.includes('401') || e.message.includes('認証')) && onAuthError) {
+          onAuthError();
+        }
+      } else {
+        setError('スプレッドシートから状態を取得できませんでした。');
+      }
     } finally {
       if(isInitial) setIsLoading(false);
     }
-  }, [isSaving, accessToken]);
+  }, [isSaving, accessToken, onAuthError]);
 
   useEffect(() => {
     fetchData(true);
@@ -104,15 +112,25 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken }) => {
         await fetchData(false);
       } catch (e) {
         console.error("Failed to save state:", e);
-        if (e instanceof Error) setError(`保存エラー: ${e.message}`);
-        else setError('状態の保存に失敗しました。');
-        // Revert on error
-        const currentState = await getCheckboxState(accessToken) || createInitialState();
-        setState(currentState);
+        if (e instanceof Error) {
+            setError(`保存エラー: ${e.message}`);
+            if ((e.message.includes('401') || e.message.includes('認証')) && onAuthError) {
+                onAuthError();
+            } else {
+                // Revert on non-auth errors
+                const currentState = await getCheckboxState(accessToken) || createInitialState();
+                setState(currentState);
+            }
+        } else {
+            setError('状態の保存に失敗しました。');
+            // Revert on unknown errors
+            const currentState = await getCheckboxState(accessToken) || createInitialState();
+            setState(currentState);
+        }
       } finally {
         setIsSaving(false);
       }
-  }, [accessToken, fetchData]);
+  }, [accessToken, fetchData, onAuthError]);
 
   const handleStatusChange = (name: string) => {
     const newState = {

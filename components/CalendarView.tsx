@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CalendarEvent } from '../types';
 import Clock from './Clock';
@@ -17,9 +18,10 @@ interface CalendarViewProps {
   isLoading: boolean;
   showEndTime: boolean;
   accessToken: string;
+  onAuthError: () => void;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken, onAuthError }) => {
   const { theme } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -122,7 +124,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           <div className="w-full md:w-3/5 flex flex-col gap-4 md:gap-2 md:min-h-0">
             <TimelineOverview events={todaysEvents} showEndTime={showEndTime} />
             <div className="flex-shrink-0">
-              <CheckboxFrame accessToken={accessToken} />
+              <CheckboxFrame accessToken={accessToken} onAuthError={onAuthError} />
             </div>
           </div>
           

@@ -31,7 +31,7 @@ const CheckboxFrameApp: React.FC = () => {
   }
 
   // Once authenticated, render the actual CheckboxFrame.
-  return <CheckboxFrame accessToken={auth.accessToken} />;
+  return <CheckboxFrame accessToken={auth.accessToken} onAuthError={auth.signIn} />;
 };
 
 
