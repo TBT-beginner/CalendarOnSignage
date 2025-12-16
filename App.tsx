@@ -11,6 +11,7 @@ import CalendarSelectionModal from './components/CalendarSelectionModal';
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCalendarListLoading, setIsCalendarListLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
   const [availableCalendars, setAvailableCalendars] = useState<CalendarListEntry[]>([]);
@@ -101,69 +102,70 @@ function App() {
 
   const handleOpenCalendarSelection = async () => {
     if (!auth.accessToken) return;
+    setIsCalendarListLoading(true);
+    setFetchError(null);
     try {
-        const calendars = await fetchCalendarList(auth.accessToken);
-        setAvailableCalendars(calendars);
-        setIsCalendarModalOpen(true);
-    } catch(e) {
-        if (e instanceof Error) {
-            setFetchError(e.message);
-            if (e.message.includes('認証')) {
-                auth.signIn();
-            }
+      const calendars = await fetchCalendarList(auth.accessToken);
+      setAvailableCalendars(calendars);
+      setIsCalendarModalOpen(true);
+    } catch (error) {
+       console.error("Failed to fetch calendar list", error);
+       if (error instanceof Error) {
+        setFetchError(error.message);
+        if (error.message.includes('認証') || error.message.includes('401')) {
+             auth.signIn();
         }
+      } else {
+        setFetchError('カレンダーリストの取得に失敗しました。');
+      }
+    } finally {
+      setIsCalendarListLoading(false);
     }
   };
 
-  const handleSaveSelectedCalendars = (ids: string[]) => {
-    setSelectedCalendarIds(ids);
-    localStorage.setItem('selectedCalendarIds', JSON.stringify(ids));
-    setIsCalendarModalOpen(false);
-  };
-  
-  const handleToggleShowEndTime = () => {
-    setShowEndTime(prev => {
-      const newValue = !prev;
-      localStorage.setItem('showEndTime', JSON.stringify(newValue));
-      return newValue;
-    });
+  const handleSaveCalendarSelection = (ids: string[]) => {
+      setSelectedCalendarIds(ids);
+      localStorage.setItem('selectedCalendarIds', JSON.stringify(ids));
+      setIsCalendarModalOpen(false);
   };
 
-  const combinedError = auth.error || fetchError;
+  if (!auth.isGsiReady) {
+      return <SetupView onSignIn={auth.signIn} isLoading={false} isGsiReady={false} error={null} />;
+  }
+
+  if (!auth.accessToken) {
+    return <SetupView onSignIn={auth.signIn} isLoading={isLoading} isGsiReady={auth.isGsiReady} error={auth.error} />;
+  }
 
   return (
-    <ThemeProvider>
-      {!auth.accessToken ? (
-        <SetupView
-          onSignIn={auth.signIn}
-          isGsiReady={auth.isGsiReady}
-          error={combinedError}
+    <div className={`h-screen w-screen overflow-hidden ${auth.accessToken ? '' : 'hidden'}`}>
+       <CalendarView
+          events={events}
+          onSignOut={handleSignOut}
+          onOpenCalendarSelection={handleOpenCalendarSelection}
+          hasSelectedCalendars={selectedCalendarIds.length > 0}
           isLoading={isLoading}
-        />
-      ) : (
-        <>
-          <CalendarView
-            events={events}
-            onSignOut={handleSignOut}
-            onOpenCalendarSelection={handleOpenCalendarSelection}
-            hasSelectedCalendars={selectedCalendarIds.length > 0}
-            isLoading={isLoading}
-            showEndTime={showEndTime}
-            accessToken={auth.accessToken}
-            onAuthError={auth.signIn}
-          />
-          <CalendarSelectionModal
-            isOpen={isCalendarModalOpen}
-            onClose={() => setIsCalendarModalOpen(false)}
-            availableCalendars={availableCalendars}
-            selectedIds={selectedCalendarIds}
-            onSave={handleSaveSelectedCalendars}
-            showEndTime={showEndTime}
-            onToggleShowEndTime={handleToggleShowEndTime}
-          />
-        </>
-      )}
-    </ThemeProvider>
+          isCalendarListLoading={isCalendarListLoading}
+          fetchError={fetchError}
+          showEndTime={showEndTime}
+          accessToken={auth.accessToken}
+          onAuthError={auth.signIn}
+       />
+       
+       <CalendarSelectionModal 
+          isOpen={isCalendarModalOpen}
+          onClose={() => setIsCalendarModalOpen(false)}
+          availableCalendars={availableCalendars}
+          selectedIds={selectedCalendarIds}
+          onSave={handleSaveCalendarSelection}
+          showEndTime={showEndTime}
+          onToggleShowEndTime={() => {
+             const newValue = !showEndTime;
+             setShowEndTime(newValue);
+             localStorage.setItem('showEndTime', JSON.stringify(newValue));
+          }}
+       />
+    </div>
   );
 }
 

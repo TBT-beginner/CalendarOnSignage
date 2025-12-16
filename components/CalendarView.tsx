@@ -16,12 +16,25 @@ interface CalendarViewProps {
   onOpenCalendarSelection: () => void;
   hasSelectedCalendars: boolean;
   isLoading: boolean;
+  isCalendarListLoading?: boolean;
+  fetchError?: string | null;
   showEndTime: boolean;
   accessToken: string;
   onAuthError: () => void;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCalendarSelection, hasSelectedCalendars, isLoading, showEndTime, accessToken, onAuthError }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ 
+  events, 
+  onSignOut, 
+  onOpenCalendarSelection, 
+  hasSelectedCalendars, 
+  isLoading, 
+  isCalendarListLoading = false,
+  fetchError = null,
+  showEndTime, 
+  accessToken, 
+  onAuthError 
+}) => {
   const { theme } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -79,10 +92,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
             <ThemeToggle />
             <button
               onClick={onOpenCalendarSelection}
-              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton}`}
+              disabled={isCalendarListLoading}
+              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton} ${isCalendarListLoading ? 'opacity-70 cursor-wait' : ''}`}
               aria-label="表示カレンダーの選択"
             >
-              <SettingsIcon className="w-6 h-6" />
+               {isCalendarListLoading ? (
+                 <svg className={`animate-spin h-6 w-6 ${theme.textPrimary}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                 </svg>
+               ) : (
+                 <SettingsIcon className="w-6 h-6" />
+               )}
             </button>
           </div>
         </div>
@@ -99,6 +120,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
           </div>
         </div>
       </header>
+
+       {fetchError && (
+            <div className={`mb-4 px-4 py-3 rounded relative border ${theme.name === 'Light' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-red-900/50 border-red-800 text-red-200'}`} role="alert">
+                <span className="block sm:inline">{fetchError}</span>
+            </div>
+        )}
       
       { !hasSelectedCalendars && !isLoading ? (
         <div className="flex-grow flex items-center justify-center">
@@ -111,10 +138,23 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, onSignOut, onOpenCa
                 </p>
                 <button
                     onClick={onOpenCalendarSelection}
-                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonHover}`}
+                    disabled={isCalendarListLoading}
+                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonHover} ${isCalendarListLoading ? 'opacity-70 cursor-wait' : ''}`}
                 >
-                    <SettingsIcon className="w-5 h-5 mr-2" />
-                    カレンダーを選択
+                    {isCalendarListLoading ? (
+                        <>
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            読み込み中...
+                        </>
+                    ) : (
+                        <>
+                            <SettingsIcon className="w-5 h-5 mr-2" />
+                            カレンダーを選択
+                        </>
+                    )}
                 </button>
             </div>
         </div>
