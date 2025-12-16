@@ -217,17 +217,17 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken, onAuthError 
                        <button
                             type="button"
                             onClick={() => handleStatusChange(name)}
-                            className={`w-full h-8 rounded-t-md font-bold text-base text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                            className={`w-full h-12 flex items-center justify-center rounded-t-md font-bold text-lg text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
                        >
-                            <span className={`absolute top-2 left-2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
                             {name}
                        </button>
-                       <div className="p-1 h-14">
+                       <div className="p-2 h-28">
                          <textarea
                             value={status.comment}
                             onChange={(e) => handleCommentChange(name, e.target.value)}
                             placeholder="不在理由..."
-                            className={`w-full h-full p-1 rounded-md text-sm border-0 transition-opacity duration-300 focus:outline-none resize-none ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            className={`w-full h-full p-1 rounded-md text-base border-0 transition-opacity duration-300 focus:outline-none resize-none ${theme.textPrimary} ${!status.isPresent ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                             style={{ backgroundColor: 'transparent' }}
                             disabled={status.isPresent}
                          />
