@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import SunIcon from './icons/SunIcon';
@@ -9,7 +10,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className={`p-2 rounded-full transition-colors focus:outline-none ${theme.iconButton}`}
+      className={`p-2 rounded-full transition-colors focus:outline-none cursor-pointer ${theme.iconButton}`}
       aria-label="テーマを切り替える"
     >
       {theme.name === 'Light' ? (

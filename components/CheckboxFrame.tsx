@@ -217,7 +217,7 @@ const CheckboxFrame: React.FC<CheckboxFrameProps> = ({ accessToken, onAuthError 
                        <button
                             type="button"
                             onClick={() => handleStatusChange(name)}
-                            className={`w-full h-12 flex items-center justify-center rounded-t-md font-bold text-lg text-white transition-all duration-200 relative transform focus:outline-none ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
+                            className={`w-full h-12 flex items-center justify-center rounded-t-md font-bold text-lg text-white transition-all duration-200 relative transform focus:outline-none cursor-pointer ${plateBgColor} ${isUpdated ? `ring-4 ${ringColorClass}` : 'ring-0'}`}
                        >
                             <span className={`absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 rounded-full ${status.isPresent ? 'bg-green-300' : 'bg-gray-400'}`}></span>
                             {name}

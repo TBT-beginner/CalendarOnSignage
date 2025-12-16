@@ -93,7 +93,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             <button
               onClick={onOpenCalendarSelection}
               disabled={isCalendarListLoading}
-              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton} ${isCalendarListLoading ? 'opacity-70 cursor-wait' : ''}`}
+              className={`p-2 rounded-full transition-all focus:outline-none ${theme.iconButton} ${isCalendarListLoading ? 'opacity-70 cursor-wait' : 'cursor-pointer hover:shadow-md'}`}
               aria-label="表示カレンダーの選択"
             >
                {isCalendarListLoading ? (
@@ -139,7 +139,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 <button
                     onClick={onOpenCalendarSelection}
                     disabled={isCalendarListLoading}
-                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonHover} ${isCalendarListLoading ? 'opacity-70 cursor-wait' : ''}`}
+                    className={`px-6 py-3 rounded-2xl font-semibold transition-all flex items-center mx-auto ${theme.button} ${theme.buttonText} ${theme.buttonHover} ${isCalendarListLoading ? 'opacity-70 cursor-wait' : 'cursor-pointer'}`}
                 >
                     {isCalendarListLoading ? (
                         <>
